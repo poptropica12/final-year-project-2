@@ -1,3 +1,14 @@
+const options = {
+    client: 'mysql',
+    connection: {
+        host: '127.0.0.1',
+        user: 'root',
+        password: 'root',
+        database: 'customer'
+    }
+}
+
+const knex = require('knex')(options);
 var express = require('express');
 var app = express();
 
@@ -18,18 +29,6 @@ app.listen(3000, function () {
 });
 
 // console.log(`${ab}`)
-
-const options = {
-    client: 'mysql',
-    connection: {
-        host: '127.0.0.1',
-        user: 'root',
-        password: 'root',
-        database: 'customer'
-    }
-}
-
-const knex = require('knex')(options);
 
 // knex.raw("SELECT VERSION()").then(
 //     (version) => console.log((version[0][0]))
