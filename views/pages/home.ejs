@@ -4,12 +4,42 @@
     <% include ../partial/head %>
 <title>Page Title</title>
 </head>
+
+<style>
+    img {
+        height: 10%;
+        width:10%;
+        /* object-fit:cover; */
+    }
+    /* .height-transition {
+        -webkit-transition: max-height 0.5s ease-in-out;
+        -moz-transition: max-height 0.5s ease-in-out;
+        -o-transition: max-height 0.5s ease-in-out;
+        transition: max-height 0.5s ease-in-out;
+        overflow-y: hidden;
+    }
+    .height-transition-hidden {
+        max-height: 0;
+    } */
+</style>
+
 <body>
     <% include ../partial/navigation %>
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
+    <div class="jumbotron">
+      <h1 class="display-3">We manage customer data for you.</h1>
+      <p class="lead">We value your customers as much as you do, in a detailed, productive way.</p>
+      <hr class="my-4">
+      <p>Scope is a customer relationship management (CRM) system that collects raw data from customers and transform them into useful information for future business decisions.</p>
+      <p class="lead">
+        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+      </p>
+      <h1>This is a Heading</h1>
+      <p>This is a paragraph.</p>
+      <img src="/public/SCOPE.png" class="navbar-brand" href="/" alt="SCOPE"></img>
+    </div>
 
 </body>
+
 <script>
     $(document).ready(function(){
         $("p").click(function(){
@@ -17,4 +47,5 @@
         });
     });
 </script>
+
 </html>
