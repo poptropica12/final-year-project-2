@@ -23,9 +23,10 @@ app.get('/', function (req, res) {
 // app.get('/', function (req, res) {
 //   res.render('pages/index.ejs');
 // });
-
+app.use(express.static('public'));
 app.use('/public', express.static('public'));
-
+app.use('/images', express.static('images'));
+app.use('/assets', express.static('assets'));
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
