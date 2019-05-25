@@ -15,7 +15,12 @@ var app = express();
 app.get('/', function (req, res) {
   res.render('pages/home.ejs');
 });
-
+app.get('/register', (req, res) => {
+    res.render('pages/register.ejs');
+});
+app.get('/login', (req, res) => {
+    res.render('pages/login.ejs');
+})
 // app.get('/', (req, res) => {
 //   res.render('pages/index.ejs');
 // });
@@ -23,10 +28,10 @@ app.get('/', function (req, res) {
 // app.get('/', function (req, res) {
 //   res.render('pages/index.ejs');
 // });
-app.use(express.static('public'));
+// app.use(express.static('public'));
 app.use('/public', express.static('public'));
-app.use('/images', express.static('images'));
-app.use('/assets', express.static('assets'));
+// app.use('/images', express.static('images'));
+// app.use('/assets', express.static('assets'));
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
