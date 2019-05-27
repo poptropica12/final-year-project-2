@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/poptropica12/final-year-project-2#readme",
   "dependencies": {
+    "cookie-session": "^1.3.3",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "knex": "^0.16.5",
