@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 15, 2019 at 04:56 PM
+-- Generation Time: May 17, 2019 at 07:53 AM
 -- Server version: 5.7.24-log
 -- PHP Version: 7.2.10
 
@@ -31,6 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `comment` (
   `comments` text,
   `rating` decimal(1,1) NOT NULL,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `pid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -57,6 +58,15 @@ CREATE TABLE `user` (
   `password` varchar(50) NOT NULL,
   `type` enum('admin','normal') NOT NULL DEFAULT 'normal'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`username`, `password`, `type`) VALUES
+('admin', 'admin1', 'admin'),
+('enoch', 'enoch', 'normal'),
+('aaa', 'aaa', 'normal');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
