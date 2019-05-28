@@ -41,7 +41,7 @@ body {
         <div class="form-group" id="password-confirm-container">
             <label for="password-confirm">Confirm password</label>
             <input type="password" name="password_confirm"  class="form-control" id="password-confirm" placeholder="Please enter your password again" required>
-            <small id="message"></small>
+            <div id="message"></div>
         </div>
         <!-- <div class="form-group">
         <label for="exampleSelect1">Example select</label>
@@ -72,6 +72,16 @@ body {
 <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
 <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for the above input. It's a bit lighter and easily wraps to a new line.</small>
 </div> -->
+<!-- <div class="form-group has-danger">
+  <label class="form-control-label" for="inputDanger1">Invalid input</label>
+  <input type="text" value="wrong value" class="form-control is-invalid" id="inputInvalid">
+  <div class="invalid-feedback">Sorry, that username's taken. Try another?</div>
+</div>
+<div class="form-group has-success">
+  <label class="form-control-label" for="inputSuccess1">Valid input</label>
+  <input type="text" value="correct value" class="form-control is-valid is-invalid" id="inputValid">
+  <div class="valid-feedback">Success! You've done it.</div>
+</div> -->
 <fieldset class="form-group">
     <legend>Identity</legend>
     <label>You are </label>
@@ -89,7 +99,7 @@ body {
     </div>
     <div class="form-check disabled">
         <label class="form-check-label">
-            <input type="radio" class="form-check-input" name="identity" id="optionsRadios3" value="option3" disabled="">
+            <input type="radio" class="form-check-input" name="identity" id="both" value="both" disabled="">
             all of the above.
         </label>
     </div>
@@ -116,50 +126,65 @@ Option two is disabled
 </form>
 </div>
 <script>
+$(document).ready(function() {
+    $('#password, #password-confirm').on('keyup', function () {
+        // console.log("Hi~");
+        if ($('#password').val() == $('#password-confirm').val()) {
+            // console.log("Here");
+            if (($('#password-container').hasClass('has-danger')) && ($('#password-confirm-container').hasClass('has-danger'))) {
+                console.log("remove");
+                $('#password-container, #password-confirm-container').removeClass("has-danger");
+            };
 
+            $('#password-container, #password-confirm-container').addClass("has-success");
 
+            if (($('#password').hasClass('is-invalid')) && ($('#password-confirm').hasClass('is-invalid'))) {
+                $('#password, #password-confirm').removeClass("is-invalid");
+            };
 
+            $('#password, #password-confirm').addClass("is-valid");
 
-$('#password, #password-confirm').on('keyup', function () {
-    if ($('#password').val() == $('#password-confirm').val()) {
-        //
-        //         if ($('password-container', 'password-confirm-container').classList.contains('has-danger')) {
-        //             $('#password-container', '#password-confirm-container').classList.remove("has-danger");
-        //         };
-        //
-        //         if ($('password-container', 'password-confirm-container').classList.contains('is-invalid')) {
-        //             $('password', 'password-confirm').classList.remove("is-invalid");
-        //         };
-        //
-        //         $('#password-container', '#password-confirm-container').classList.add("has-success");
-        //
-        //         $('password', 'password-confirm').classList.add("is-valid");
-        //
-        //         if ($('#message').classList.contains('invalid-feedback')) {
-        //             $('#message').classList.remove("invalid-feedback")
-        //         };
-            $('#message').html("The passwords are consistent.").css("color", "green");
-            document.getElementById("submit").removeAttribute("disabled");
+            if ($('#message').hasClass('invalid-feedback')) {
+                $('#message').removeClass("invalid-feedback");
+            };
+            // $('#message').html("The passwords are consistent.").css("color", "green");
+            $('#message').addClass("valid-feedback");
+            $('#message').text("The passwords are consistent.");
+            $('#submit').removeAttr("disabled");
             // console.log(document.getElementById("submit").classList);
-    }
-    else {
-        //         if ($('#password-container', '#password-confirm-container').classList.contains("has-success")) {
-        //             $('#password-container', '#password-confirm-container').classList.remove("has-success");
-        //         };
-        //         $('#password-container', '#password-confirm-container').classList.add("has-danger");
-        //         if ($('#password', '#password-confirm').classList.contains('is-valid')) {
-        //             $('#password', '#password-confirm').classList.remove("is-valid");
-        //         };
-        //         $('#password', '#passsword-confirm').classList.add("is-invalid");
-        //         if ($('#message').classList.contains('valid-feedback')) {
-        //             $('#message').classList.remove("valid-feedback");
-        //         };
-            $('#message').html("Sorry, the passwords are not consistent, please try again.").css("color", "red");
+        }
+        else {
+            // console.log("There");
+            if (($('#password-container').hasClass('has-success')) && ($('#password-confirm-container').hasClass('has-success'))) {
+                $('#password-container, #password-confirm-container').removeClass("has-success");
+            };
+
+            $('#password-container, #password-confirm-container').addClass("has-danger");
+
+            if (($('#password').hasClass('is-valid')) && ($('#password-confirm').hasClass('is-valid'))) {
+                console.log("done");
+                $('#password, #password-confirm').removeClass("is-valid");
+            };
+
+            $('#password, #password-confirm').addClass("is-invalid");
+
+            if ($('#message').hasClass('valid-feedback')) {
+                $('#message').removeClass("valid-feedback");
+            };
+            console.log("Hi");
+            $('#message').addClass("invalid-feedback");
+            $('#message').text("Sorry, the passwords are not consistent, please try again.");
+            // $('#message').html("Sorry, the passwords are not consistent, please try again.").css("color", "red");
+            console.log($('#message').text());
+
             $('#submit').prop("disabled", "true");
-    }
-    //
+        };
+        console.log(document.getElementById("message").classList);
+        // console.log($("#password-confirm-container").hasClass("has-danger"));
+    });
+    // console.log($("#password-confirm-container").hasClass("has-danger"));
 });
-// console.log(typeof($('#password-confirm-container')));
+// console.log($('#password-confirm').hasClass("has-danger"));
 // console.log($('#password-container').classList);
 </script>
 </body>
