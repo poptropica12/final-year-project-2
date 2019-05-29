@@ -2,7 +2,7 @@ var mysql = require('mysql');
 var conn = mysql.createConnection ({
     host: '127.0.0.1',
     user: 'root',
-    password: '',
+    password: 'root',
     database: 'customer'
 });
 conn.connect();
@@ -13,7 +13,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var cookieParser = require("cookie-parser");
-// var session = require("express-session");
+var session = require("express-session");
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -33,9 +33,15 @@ app.get('/', function (req, res) {
     // });
     // req.flash('notify', 'Redirect successful!')
     // res.redirect('/')
-    login = req.query.login;
+    login = req.session.login;
+    if (login == 1) {
+
+    }
+    else {
+
+    };
     console.log(login);
-  res.render('pages/home.ejs', {login: login});
+    res.render('pages/home.ejs', {login: login});
 });
 app.get('/register', (req, res) => {
     failure = req.query.status;
@@ -50,18 +56,18 @@ app.get('/register', (req, res) => {
 });
 app.get('/login', (req, res) => {
     success = req.query.status;
-    status = req.query.logged;
+    status = req.query.invalid;
     // console.log(success);
     console.log("status = " + status);
-    res.render('pages/login.ejs', {success: success, logged: status});
+    res.render('pages/login.ejs', {success: success, invalid: status});
 });
 
 app.post('/user-register', (req, res, next) => {
-    console.log(req.body);
-    console.log(req.body.email);
+    console.log("req.body = " + req.body);
+    console.log("req.body.email =" + req.body.email);
     conn.query('SELECT * FROM user WHERE username=?', [req.body.username], function (error, results, fields) {
         if (error) throw error;
-        console.log(results);
+        console.log("results = " + results);
         if (results != "") {
             failure = true;
             res.redirect('/register?status=' + failure);
@@ -70,7 +76,7 @@ app.post('/user-register', (req, res, next) => {
         else if (req.body.password == req.body.password_confirm) {
                 conn.query('INSERT INTO user (username, password) VALUES (?, ?)', [req.body.username, req.body.password], function (error, results, fields) {
                     success = true;
-                    return res.redirect('/login?status=', success);
+                    return res.redirect('/login?status=' + success);
                 })
             }
             else {
@@ -80,28 +86,34 @@ app.post('/user-register', (req, res, next) => {
     })
 
 
-})
+});
 
 app.post('/user-login', (req, res, next) => {
     console.log(req.body);
     console.log(req.body.email);
-    conn.query("SELECT username, password FROM user WHERE username=?", [req.body.username], function (error, results, fields) {
+    conn.query("SELECT `username`, `password` FROM `user` WHERE `username`=?", [req.body.username], function (error, results, fields) {
         if (error) throw error;
+        console.log("results = " + results);
         if (results == "") {
-            status = false;
-            return res.redirect("/login?logged=", status);
+            console.log("fail 1");
+            status = true;
+            return res.redirect("/login?invalid=" + status);
         }
-        else if (req.body.password != results[0]['password']) {
-            status = false;
-            return res.redirect("/login?logged=", status);
+        else if (req.body.password != results['password']) {
+            console.log("fail 2");
+            status = true;
+            return res.redirect("/login?invalid=" + status);
         }
         else {
-            status = true;
-            return res.redirect("/?logged=", status);
+            status = false;
+            console.log("succeess");
+            conn.query("SELECT `uid` FROM user WHERE `username`=?", )
+            req.session.login = 1;
+            return res.redirect("/");
         }
-    })
+    });
 
-})
+});
 // app.get('/', (req, res) => {
 //   res.render('pages/index.ejs');
 // });

@@ -8,6 +8,13 @@
     /* li div {
         padding: 10px;
     } */
+    #logout {
+        display: none;
+    }
+
+    #login {
+        display: block;
+    }
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -55,7 +62,22 @@
             <button type="button" class="btn btn-primary">Sign up</button>
         </a>
         <a href="/login">
-            <button type="button" class="btn btn-primary">Login</button>
-        </a>    
+            <button type="button" class="btn btn-primary" id="login">Login</button>
+        </a>
+        <a href="/">
+            <button type="button" class="btn btn-primary" id="logout" onclick="toggleLog()">Logout</button>
+        </a>
   </div>
 </nav>
+<script>
+    function toggleLog() {
+        if ($('#login').css("display") == "block") {
+            $('#login').css("display", "none");
+            $('#logout').css("display", "block");
+        }
+        else {
+            $('#login').css("display", "block");
+            $('#logout').css("display", "none");
+        }
+    };
+</script>
