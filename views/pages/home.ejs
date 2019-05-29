@@ -1,4 +1,4 @@
-<!DOCTYPE html5>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <% include ../partial/head %>
@@ -28,6 +28,7 @@
 
 <body>
     <% include ../partial/navigation %>
+    <% if (logged) %>
     <div class="jumbotron">
       <h1 class="display-3">We manage customer data for you.</h1>
       <p class="lead">We value your customers as much as you do, in a detailed, productive way.</p>
