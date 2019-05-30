@@ -2,7 +2,7 @@ var mysql = require('mysql');
 var conn = mysql.createConnection ({
     host: '127.0.0.1',
     user: 'root',
-    password: 'root',
+    password: '',
     database: 'customer'
 });
 conn.connect(function(err) {
@@ -34,6 +34,10 @@ app.use(cookieSession({
     name: 'session',
     keys: ['key1', 'key2']
 }));
+
+// app.get('/test', function (req, res) {
+//     res.render('pages/test');
+// })
 app.get('/', function (req, res) {
     // req.flash('info', 'Welcome');
     // res.render('index', {
@@ -41,15 +45,20 @@ app.get('/', function (req, res) {
     // });
     // req.flash('notify', 'Redirect successful!')
     // res.redirect('/')
-    login = req.session.login;
-    if (login == 1) {
-
+    // login = req.session.login;
+    // if (login == 1) {
+    //
+    // }
+    // else {
+    if (req.cookies['uid']) {
+        res.render('pages/home', {  uid: req.cookies['uid'],
+                                    type: req.cookies['type']})
     }
+    // console.log(login);
     else {
-
+        res.render('pages/home',  {  uid: "",
+                                    type: ""})
     };
-    console.log(login);
-    res.render('pages/home.ejs', {login: login});
 });
 app.get('/register', (req, res) => {
     failure = req.query.status;
@@ -63,11 +72,23 @@ app.get('/register', (req, res) => {
     res.render('pages/register.ejs', {failure: failure});
 });
 app.get('/login', (req, res) => {
-    success = req.query.status;
-    status = req.query.invalid;
+    // if(req.query.wrongUsernamePassword) {
+    //     res.render('page/login.ejs', {invalid: wrongUsernamePassword});
+    // }
+    // if (res.query.success) {
+    //     res.
+    // }
+    // var url = new URL(windows.location.href);
+    // status = req.query.invalid;
     // console.log(success);
-    console.log("status = " + status);
-    res.render('pages/login.ejs', {success: success, invalid: status});
+    // console.log("status = " + status);
+    res.render('pages/login');
+});
+
+// signout
+app.get('/logout',(req, res) => {
+    res.clearCookie('uid');
+    res.redirect('/');
 });
 
 app.post('/user-register', (req, res, next) => {
@@ -98,31 +119,66 @@ app.post('/user-register', (req, res, next) => {
 
 app.post('/user-login', (req, res, next) => {
     // console.log(req.body);
-    console.log(req.body.username);
+    console.log("Login: req.body.username = " + req.body.username);
+    if (req.body.username) {
+        if (req.body.password) {
+            conn.query("SELECT * FROM user WHERE username = ? AND password = ?", [req.body.username, req.body.password], function (error, results, fields) {
+                console.error(`SQL = SELECT * FROM user WHERE username = ${req.body.username} AND password = ${req.body.password}`);
+                if (error) throw error;
+                console.error("results = " + results + "typeof = " + typeof(results));
+                // if (results) console.error("username = " + results[0]);
+                if (results[0] != undefined) {
+                    username = results[0]['username'];
+                    uid = results[0]['uid'];
+                    type = results[0]['type'];
+                    res.cookie('uid', results[0]['uid'], {maxAge: 900000});
+                    res.cookie('username', results[0]['username'], {maxAge: 900000});
+                    res.cookie('type', results[0]['type'], {maxAge: 900000});
+                    res.redirect("/");
 
-    conn.query(`SELECT username, password FROM user WHERE username=${req.body.username}`,
-        console.log("SELECT `username`, `password` FROM `user` WHERE `username`='?'", [req.body.username]);
-        console.log("results = " + results);
-        if (results == "") {
-            console.log("fail 1");
-            status = true;
-            return res.redirect("/login?invalid=" + status);
-        }
-        else if (req.body.password != results['password']) {
-            console.log("fail 2");
-            status = true;
-            return res.redirect("/login?invalid=" + status);
+                }
+                else {
+
+                    console.log("Wrong username or password.");
+                    res.redirect('/login?wrongUsernamePassword=' + true);
+                }
+            })
         }
         else {
-            status = false;
-            console.log("success");
-            conn.query("SELECT `uid` FROM user WHERE `username`=?",
-            function (error, results, fields) {
-                if (error) throw error;)
-            req.session.login = 1;
-            return res.redirect("/");
-        }
-    );
+            return res.redirect("/login?passwordNull=" + true);
+        };
+    }
+    else {
+        return res.redirect("/login?usernameNull=" + true);
+    };
+    // conn.query(`SELECT username, password FROM user WHERE username=${req.body.username}`,
+    //     console.log("SELECT `username`, `password` FROM `user` WHERE `username`='?'", [req.body.username], function (
+    //         error, results, fields) {
+    //             if (error) throw error;
+    //
+    //         }
+    //     ));
+    //     console.log("results = " + results);
+    //     if (results == "") {
+    //         console.log("fail 1");
+    //         status = true;
+    //         return res.redirect("/login?invalid=" + status);
+    //     }
+    //     else if (req.body.password != results['password']) {
+    //         console.log("fail 2");
+    //         status = true;
+    //         return res.redirect("/login?invalid=" + status);
+    //     }
+    //     else {
+    //         status = false;
+    //         console.log("success");
+    //         conn.query("SELECT `uid` FROM user WHERE `username`=?",
+    //         function (error, results, fields) {
+    //             if (error) throw error;)
+    //         req.session.login = 1;
+    //         return res.redirect("/");
+    //     }
+    // );
 
 });
 // app.get('/', (req, res) => {
@@ -134,10 +190,19 @@ app.post('/user-login', (req, res, next) => {
 // });
 // app.use(express.static('public'));
 app.use('/public', express.static('public'));
+// app.use('/products', express.static('public/products'))
 // app.use('/images', express.static('images'));
 // app.use('/assets', express.static('assets'));
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
+});
+
+app.get('/product-listing', function (req, res) {
+    res.render('pages/product-listing', {uid: req.cookies['uid']});
+});
+
+app.get('/product/:pid', function (req, res) {
+    res.render('pages/product');
 });
 
 // console.log(`${ab}`)

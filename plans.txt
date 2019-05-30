@@ -1,0 +1,23 @@
+-Monthly report
+
+Most valuable customer
+Top sale product
+Total sales revenue
+Most profitable product
+Customer average purchase
+Bottom sale product
+
+-Comparison
+
+sales trend
+
+
+-Annual Report
+
+-Sales recommendation
+
+bundle top sales with bottom sales
+
+discount for less popular products
+
+increase price for popular products

@@ -13,28 +13,24 @@ body {
 </style>
     <body>
         <div class="jumbotron">
-            <% if (success) { %>
-                <div class="alert alert-dismissible alert-success">
+                <div class="alert alert-dismissible alert-success" style="display:none;" id="success-message">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                     <strong>Now you are set!</strong> You have successfully registered, login now!
                 </div>
-            <% } %>
-            <% if (invalid != false && invalid != undefined) { %>
-                <div class="alert alert-dismissible alert-danger">
+                <div class="alert alert-dismissible alert-danger" style="display:none;" id="error-message">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                     <strong>Oh no!</strong> Your username or passowrd is incorrect, please try again.
                 </div>
-            <% } %>
         <!-- <h1 class="display-5">Login Page</h1> -->
             <form action="/user-login" method="post" form_signature="15652032749810445774">
                     <h1 class="display-4">Login Page</h1>
                     <div class="form-group">
-                        <label for="email">Your email</label>
-                        <input type="email" name="email" class="form-control" id="email" placeholder="Please enter your email here">
+                        <label for="email">Your username</label>
+                        <input type="email" name="username" class="form-control" id="email" placeholder="Please enter your email here">
                     </div>
                     <div class="form-group">
                         <label for="password">Your password</label>
-                        <input type="password" class="form-control" name="pasword" id="password" placeholder="Please enter your password here">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Please enter your password here">
                     </div>
                     <button type="reset" class="btn btn-primary">Reset</button>
                     <button type="submit" class="btn btn-primary">Login</button>
@@ -44,7 +40,25 @@ body {
 
 
         <script>
+            var url = new URL(window.location.href);
+            var status = url.searchParams.get("status");
+            var wrongUsernamePassword = url.searchParams.get("wrongUsernamePassword");
+            console.log("status = " + status);
+            console.log("wrongUsernamePassword = " + wrongUsernamePassword);
 
+            if (url.searchParams.get("status") && status != "null") {
+                $('#success-message').css("display", "block");
+                console.log(typeof(status));
+            }
+            else {
+                $('#success-message').css("display", "none");
+            };
+            if (url.searchParams.get("wrongUsernamePassword") && wrongUsernamePassword != "null") {
+                $("#error-message").css("display", "block");
+            }
+            else {
+                $("#error-message").css("display", "none");
+            }
         </script>
     </body>
 </html>
