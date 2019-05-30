@@ -5,21 +5,29 @@ var conn = mysql.createConnection ({
     password: 'root',
     database: 'customer'
 });
-conn.connect();
+conn.connect(function(err) {
+    if (err) {
+        console.error('error connecting: ' + err.stack);
+        return;
+    }
+    console.log("connected as id " + conn.threadID);
+});
 
 // const knex = require('knex')(options);
-var flash = require('express-flash-messages');
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-var cookieParser = require("cookie-parser");
-var session = require("express-session");
+const flash = require('express-flash-messages');
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
+app.use(cookieParser());
+app.set('view engine', 'ejs');
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-var cookieSession = require('cookie-session');
+const cookieSession = require('cookie-session');
 // app.use(express.cookieParser('keyboard cat'));
-app.use(cookieParser('keyboard cat'));
+// app.use(cookieParser('keyboard cat'));
 // app.use(session({ cookie: { maxAge: 60000 }}));
 app.use(flash());
 app.use(cookieSession({
@@ -65,7 +73,7 @@ app.get('/login', (req, res) => {
 app.post('/user-register', (req, res, next) => {
     console.log("req.body = " + req.body);
     console.log("req.body.email =" + req.body.email);
-    conn.query('SELECT * FROM user WHERE username=?', [req.body.username], function (error, results, fields) {
+    conn.query('SELECT * FROM user WHERE username=?', [req.body.email], function (error, results, fields) {
         if (error) throw error;
         console.log("results = " + results);
         if (results != "") {
@@ -89,10 +97,11 @@ app.post('/user-register', (req, res, next) => {
 });
 
 app.post('/user-login', (req, res, next) => {
-    console.log(req.body);
-    console.log(req.body.email);
-    conn.query("SELECT `username`, `password` FROM `user` WHERE `username`=?", [req.body.username], function (error, results, fields) {
-        if (error) throw error;
+    // console.log(req.body);
+    console.log(req.body.username);
+
+    conn.query(`SELECT username, password FROM user WHERE username=${req.body.username}`,
+        console.log("SELECT `username`, `password` FROM `user` WHERE `username`='?'", [req.body.username]);
         console.log("results = " + results);
         if (results == "") {
             console.log("fail 1");
@@ -106,12 +115,14 @@ app.post('/user-login', (req, res, next) => {
         }
         else {
             status = false;
-            console.log("succeess");
-            conn.query("SELECT `uid` FROM user WHERE `username`=?", )
+            console.log("success");
+            conn.query("SELECT `uid` FROM user WHERE `username`=?",
+            function (error, results, fields) {
+                if (error) throw error;)
             req.session.login = 1;
             return res.redirect("/");
         }
-    });
+    );
 
 });
 // app.get('/', (req, res) => {

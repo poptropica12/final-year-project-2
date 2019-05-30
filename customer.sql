@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 29, 2019 at 01:46 PM
+-- Generation Time: May 30, 2019 at 01:39 AM
 -- Server version: 5.7.24
 -- PHP Version: 7.2.10
 
@@ -44,8 +44,18 @@ CREATE TABLE `comment` (
 CREATE TABLE `product` (
   `pid` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `price` decimal(10,0) NOT NULL DEFAULT '0'
+  `price` decimal(10,2) NOT NULL DEFAULT '0.00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `product`
+--
+
+INSERT INTO `product` (`pid`, `name`, `price`) VALUES
+(1, 'orange', '6.50'),
+(2, 'banana', '7.00'),
+(3, 'apple', '5.40'),
+(4, 'grapes', '10.70');
 
 -- --------------------------------------------------------
 
@@ -126,7 +136,7 @@ ALTER TABLE `comment`
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `pid` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `pid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `sales`
