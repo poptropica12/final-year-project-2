@@ -21,6 +21,10 @@ body {
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                     <strong>Oh no!</strong> Your username or passowrd is incorrect, please try again.
                 </div>
+                <div class="alert alert-dismissible alert-danger" style="display:none;" id="login-required">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Sorry!</strong> Only registered users could have access to these contents, please login your account or sign up for one.
+                </div>
         <!-- <h1 class="display-5">Login Page</h1> -->
             <form action="/user-login" method="post" form_signature="15652032749810445774">
                     <h1 class="display-4">Login Page</h1>
@@ -43,6 +47,7 @@ body {
             var url = new URL(window.location.href);
             var status = url.searchParams.get("status");
             var wrongUsernamePassword = url.searchParams.get("wrongUsernamePassword");
+            var login = url.searchParams.get("login");
             console.log("status = " + status);
             console.log("wrongUsernamePassword = " + wrongUsernamePassword);
 
@@ -58,6 +63,12 @@ body {
             }
             else {
                 $("#error-message").css("display", "none");
+            };
+            if(!login && login !="null") {
+            $("#login-required").css("display", "block")
+            }
+            else {
+                $("#login-required").css("display", "none");
             }
         </script>
     </body>

@@ -189,20 +189,38 @@ app.post('/user-login', (req, res, next) => {
 //   res.render('pages/index.ejs');
 // });
 // app.use(express.static('public'));
-app.use('/public', express.static('public'));
-// app.use('/products', express.static('public/products'))
-// app.use('/images', express.static('images'));
-// app.use('/assets', express.static('assets'));
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
-});
+
 
 app.get('/product-listing', function (req, res) {
-    res.render('pages/product-listing', {uid: req.cookies['uid']});
+    conn.query("SELECT pid, name, price, image FROM product", function (error, results, fields) {
+        console.log(results);
+        res.render('pages/product-listing', {uid: req.cookies['uid'], results: results});
+    });
 });
 
 app.get('/product/:pid', function (req, res) {
-    res.render('pages/product');
+    console.log(req.params.pid);
+    if (req.cookies['uid']) {
+        conn.query("SELECT * FROM `comment` INNER JOIN user ON comment.uid = user.uid WHERE pid = ?", [req.params.pid], function (error, results, fields) {
+
+        });
+        conn.query("SELECT product.pid, product.name, product.price, product.image, sales.date, SUM(sales.qty) AS qty, sales.uid FROM sales INNER JOIN product ON sales.pid = product.pid WHERE product.pid = ? GROUP BY product.pid;", [req.params.pid], function (error, results, fields) {
+            if (error) throw error;
+            console.log(req.params.pid);
+            console.log(results);
+            if (results) {
+                res.render('pages/product', {results: results});
+            }
+            else {
+                res.render('pages/product', {qty: 0, results: undefined});
+            };
+            // console.log(results);
+        });
+        // res.render('pages/product');
+    }
+    else {
+        res.redirect('/login?login=' + false);
+    };
 });
 
 // console.log(`${ab}`)
@@ -218,3 +236,10 @@ app.get('/product/:pid', function (req, res) {
 //     console.log(rows);
 //   // }
 // }).catch((err) => { console.log(err); throw err });
+app.use('/public', express.static('public'));
+// app.use('/products', express.static('public/products'))
+// app.use('/images', express.static('images'));
+// app.use('/assets', express.static('assets'));
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
+});

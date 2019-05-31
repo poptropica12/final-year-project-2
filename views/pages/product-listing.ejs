@@ -4,10 +4,26 @@
 <html lang="en">
     <head>
         <% include ../partial/head %>
-        <title>Registration Page</title>
+        <title>Product Listing</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <script src="./public/holder.min.js"></script>
+        <script>
+            // console.log("Innnnnnnnnnnnnnnnnnn!");
+            // $(".nav-item").removeClass("active");
+            // tabs = $("nav div ul").children;
+            // for (var i = 0; i < tabs.length; i++) {
+            //     if (tabs[i].children[0].innerHTML == "Product Listing") {
+            //         break;
+            //     }
+            //     else {
+            //         console.log("This is the " + i + "index.");
+            //     };
+            //     if (i = tabs.length - 1) {
+            //         console.error("Not found");
+            //     };
+            // };
+        </script>
     </head>
     <style>
         body {
@@ -15,47 +31,49 @@
         }
         :root {
   --jumbotron-padding-y: 3rem;
-}
+        }
 
-.jumbotron {
-  padding-top: var(--jumbotron-padding-y);
-  padding-bottom: var(--jumbotron-padding-y);
-  margin-bottom: 0;
-  background-color: #fff;
-}
-@media (min-width: 768px) {
-  .jumbotron {
-    padding-top: calc(var(--jumbotron-padding-y) * 2);
-    padding-bottom: calc(var(--jumbotron-padding-y) * 2);
-  }
-}
+        .jumbotron {
+          padding-top: var(--jumbotron-padding-y);
+          padding-bottom: var(--jumbotron-padding-y);
+          margin-bottom: 0;
+          background-color: #fff;
+        }
+        @media (min-width: 768px) {
+          .jumbotron {
+            padding-top: calc(var(--jumbotron-padding-y) * 2);
+            padding-bottom: calc(var(--jumbotron-padding-y) * 2);
+          }
+        }
 
-.jumbotron p:last-child {
-  margin-bottom: 0;
-}
+        .jumbotron p:last-child {
+          margin-bottom: 0;
+        }
 
-.jumbotron-heading {
-  font-weight: 300;
-}
+        .jumbotron-heading {
+          font-weight: 300;
+        }
 
-.jumbotron .container {
-  max-width: 40rem;
-}
+        .jumbotron .container {
+          max-width: 40rem;
+        }
 
-footer {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-}
+        footer {
+          padding-top: 3rem;
+          padding-bottom: 3rem;
+        }
 
-footer p {
-  margin-bottom: .25rem;
-}
+        footer p {
+          margin-bottom: .25rem;
+        }
 
-.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+        .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+        /* div {
+            border: black 1px solid;
+        } */
     </style>
     <body>
-        <% include ../partial/navigation %>
-
+        <%- include('../partial/navigation', {title: "product listing"}) %>
 
     <main role="main">
 
@@ -74,6 +92,55 @@ footer p {
         <div class="container">
 
           <div class="row">
+            <% for (var i = 0; i < results.length; i++) { %>
+            <div class="col-md-4" style="max-width: 20rem;">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="public/products/<%= results[i]['image'] %>" alt="Card image cap">
+                <div class="card-body card text-white bg-primary">
+                  <p class="card-text"><%= results[i]['name'] %></p>
+                  <div class="d-flex justify-content-between align-items-center card text-white">
+                    <div class="">
+                        <a href="/product/<%= results[i]['pid'] %>">
+                      <button type="button" class="btn btn-sm btn-info">View</button>
+                      <button type="button" class="btn btn-sm btn-info">Edit</button>
+                    </div>
+                    <small class="text-muted"></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% } %>
+            <!-- <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap">
+                <div class="card-body">
+                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                    </div>
+                    <small class="text-muted">9 mins</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap">
+                <div class="card-body">
+                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                    </div>
+                    <small class="text-muted">9 mins</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="col-md-4">
               <div class="card mb-4 box-shadow">
                 <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap">
@@ -164,53 +231,7 @@ footer p {
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="card mb-4 box-shadow">
-                <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap">
-                <div class="card-body">
-                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                      <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                    </div>
-                    <small class="text-muted">9 mins</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card mb-4 box-shadow">
-                <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap">
-                <div class="card-body">
-                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                      <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                    </div>
-                    <small class="text-muted">9 mins</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card mb-4 box-shadow">
-                <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&bg=55595c&fg=eceeef&text=Thumbnail" alt="Card image cap">
-                <div class="card-body">
-                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                      <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                    </div>
-                    <small class="text-muted">9 mins</small>
-                  </div>
-                </div>
-              </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

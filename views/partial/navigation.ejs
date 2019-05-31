@@ -31,14 +31,14 @@
 
   <div class="navbar-collapse collapse" id="navbarColor01" style="">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      <li class="nav-item">
+        <a class="nav-link <% if (title == "home") { %>active<% } %>" href="/">Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Features</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/product-listing">Product Listing</a>
+        <a class="nav-link <% if (title == "product listing") { %>active<% } %>" href="/product-listing">Product Listing</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">About</a>
@@ -77,6 +77,13 @@
                 }
                 return "";
             };
+            // function toggleActive() {
+            //     $(this).parent().siblings().removeClass("active");
+            //     console.log(this);
+            //     console.log($(this));
+            //     $(this).parent().addClass("active");
+            //     console.log("Run!");
+            }
             // function toggleLog() {
             //     if ($('#login').css("display") == "block") {
             //         $('#login').css("display", "none");
