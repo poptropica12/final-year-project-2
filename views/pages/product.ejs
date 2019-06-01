@@ -1,28 +1,200 @@
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
-
 <!DOCTYPE html>
 <html>
+    <head>
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <!-- <script src="/public/star-rating.min.js"></script> -->
+        <script>
+            $(document).ready(function(){
+                //-- Click on detail
+                $("ul.menu-items > li").on("click",function(){
+                    $("ul.menu-items > li").removeClass("active");
+                    $(this).addClass("active");
+                })
+
+                $(".attr,.attr2").on("click",function(){
+                    var clase = $(this).attr("class");
+
+                    $("." + clase).removeClass("active");
+                    $(this).addClass("active");
+                })
+
+                //-- Click on QUANTITY
+                $(".btn-minus").on("click",function(){
+                    var now = $(".section > div > input").val();
+                    if ($.isNumeric(now)){
+                        if (parseInt(now) -1 > 0){ now--;}
+                        $(".section > div > input").val(now);
+                    }else{
+                        $(".section > div > input").val("1");
+                    }
+                })
+                $(".btn-plus").on("click",function(){
+                    var now = $(".section > div > input").val();
+                    if ($.isNumeric(now)){
+                        $(".section > div > input").val(parseInt(now)+1);
+                    }else{
+                        $(".section > div > input").val("1");
+                    }
+                })
+            })
+            var url = new URL(window.location.href);
+            var qty = url.searchParams.get("qty");
+            if (qty == 0) {
+
+            };
+            function getCookie(cname) {
+                var name = cname + "=";
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var cookies = decodedCookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i];
+                    while (cookie.charAt(0) == ' ') {
+                        cookie = cookie.substring(1);
+                    }
+                    if (cookie.indexOf(name) == 0) {
+                        return cookie.substring(name.length, cookie.length);
+                    }
+                }
+                return "";
+            };
+            var uid = getCookie("uid");
+            if (uid) {
+                // console.log("Run!");
+                $("#readOnlyUID").attr("placeholder", uid);
+            };
+            // var $star_rating = $('.star-rating .fa');
+
+            // var SetRatingStar = function() {
+            //     return $star_rating.each(function() {
+            //         if (parseInt($star_rating.siblings('input.rating-value').val()) >= parseInt($(this).data('rating'))) {
+            //             return $(this).removeClass('fa-star-o').addClass('fa-star');
+            //         } else {
+            //             return $(this).removeClass('fa-star').addClass('fa-star-o');
+            //         }
+            //     });
+            // };
+            //
+            // $star_rating.on('click', function() {
+            //     $star_rating.siblings('input.rating-value').val($(this).data('rating'));
+            //     return SetRatingStar();
+            // });
+            //
+            // SetRatingStar();
+            // $(document).ready(function() {
+            //
+            // });
+        </script>
+        <style>
+            ul > li {margin-right:25px;font-weight:lighter;cursor:pointer}
+            li.active {border-bottom:3px solid silver;}
+            .item-photo{display:flex;justify-content:center;align-items:center;border-right:1px solid #f6f6f6;}
+            .menu-items{list-style-type:none;font-size:11px;display:inline-flex;margin-bottom:0;margin-top:20px}
+            .btn-success{width:100%;border-radius:0;}
+            .section{width:100%;margin-left:-15px;padding:2px;padding-left:15px;padding-right:15px;background:#f8f9f9}
+            .title-price{margin-top:30px;margin-bottom:0;color:black}
+            .title-attr{margin-top:0;margin-bottom:0;color:black;}
+            .btn-minus{cursor:pointer;font-size:7px;display:flex;align-items:center;padding:5px;padding-left:10px;padding-right:10px;border:1px solid gray;border-radius:2px;border-right:0;}
+            .btn-plus{cursor:pointer;font-size:7px;display:flex;align-items:center;padding:5px;padding-left:10px;padding-right:10px;border:1px solid gray;border-radius:2px;border-left:0;}
+            div.section > div {width:100%;display:inline-flex;}
+            div.section > div > input {margin:0;padding-left:5px;font-size:10px;padding-right:5px;max-width:18%;text-align:center;}
+            .attr,.attr2{cursor:pointer;margin-right:5px;height:20px;font-size:10px;padding:2px;border:1px solid gray;border-radius:2px;}
+            .attr.active,.attr2.active{ border:1px solid orange;}
+            @media (max-width: 426px) {
+                .container {margin-top:0px !important;}
+                .container > .row{padding:0 !important;}
+                .container > .row > .col-xs-12.col-sm-5{
+                    padding-right:0 ;
+                }
+                .container > .row > .col-xs-12.col-sm-9 > div > p{
+                    padding-left:0 !important;
+                    padding-right:0 !important;
+                }
+                .container > .row > .col-xs-12.col-sm-9 > div > ul{
+                    padding-left:10px !important;
+
+                }
+                .section{width:104%;}
+                .menu-items{padding-left:0;}
+            }
+            .thumbnail {
+                padding:0px;
+            }
+            .panel {
+                position:relative;
+            }
+            .panel>.panel-heading:after,.panel>.panel-heading:before{
+                position:absolute;
+                top:11px;left:-16px;
+                right:100%;
+                width:0;
+                height:0;
+                display:block;
+                content:" ";
+                border-color:transparent;
+                border-style:solid solid outset;
+                pointer-events:none;
+            }
+            .panel>.panel-heading:after{
+                border-width:7px;
+                border-right-color:#f7f7f7;
+                margin-top:1px;
+                margin-left:2px;
+            }
+            .panel>.panel-heading:before{
+                border-right-color:#ddd;
+                border-width:8px;
+            }
+            #comment {
+                color: black;
+            }
+            body {
+                background-image: url('data:image/svg+xml,%3Csvg width="52" height="26" viewBox="0 0 52 26" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.4"%3E%3Cpath d="M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z" /%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            }
+            /* .star-rating {
+                line-height:32px;
+                font-size:1.25em;
+            }
+
+            .star-rating .fa-star{color: yellow;} */
+        </style>
+        <!-- <link href="/public/star-rating.min.css" rel="stylesheet"> -->
+
+        <!-- <script src="//code.jquery.com/jquery-1.11.1.min.js"></script> -->
+        <!------ Include the above in your HEAD tag ---------->
+        <title><%= product[0]['name'] %></title>
+    </head>
     <body>
         <div class="container">
+            <!-- <div class="col-lg-12">
+                <div class="star-rating">
+                    <span class="fa fa-star-o" data-rating="1"></span>
+                    <span class="fa fa-star-o" data-rating="2"></span>
+                    <span class="fa fa-star-o" data-rating="3"></span>
+                    <span class="fa fa-star-o" data-rating="4"></span>
+                    <span class="fa fa-star-o" data-rating="5"></span>
+                    <input type="hidden" name="whatever3" class="rating-value" value="4.1">
+                </div>
+            </div> -->
         	<div class="row">
                <div class="col-xs-4 item-photo">
-                    <img style="max-width:100%;" src="/public/products/<%= results[0]['image'] %>" />
+                    <img style="max-width:100%;" src="/public/products/<%= product[0]['image'] %>" />
                 </div>
                 <div class="col-xs-5" style="border:0px solid gray">
                     <!-- Datos del vendedor y titulo del producto -->
-                    <h3><%= results[0]['name'] %></h3>
+                    <h3><%= product[0]['name'] %></h3>
                     <!-- Precios -->
-                    <h6 class="title-price"><small>Qunatity of sales</small></h6>
-                    <h3 style="margin-top:0px;"><%= results[0]['qty'] %></h3>
-
+                    <div class="section" style="padding-bottom:5px;">
+                        <h6 class="title-price" style="color: blue;">Total sales</small></h6>
+                        <h3 style="margin-top:0px;"><%= qty %></h3>
+                    </div>
                     <!-- Detalles especificos del producto -->
                     <div class="section" style="padding-bottom:5px;">
-                        <h6 class="title-attr"><small>Price</small></h6>
+                        <h6 class="title-attr" style="color: blue;">Price per unit</h6>
                         <div>
-                            <div><h3>$<%= results[0]['price'] %></h3></div>
+                            <div><h3>$<%= product[0]['price'] %></h3></div>
                         </div>
                     </div>
                     <!-- <div class="section" style="padding-bottom:20px;">
@@ -36,14 +208,126 @@
 
                     <!-- Botones de compra -->
                     <div class="section" style="padding-bottom:20px;">
-                        <button class="btn btn-success"><span style="margin-right:20px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Agregar al carro</button>
-                        <h6><a href="#"><span class="glyphicon glyphicon-heart-empty" style="cursor:pointer;"></span> Agregar a lista de deseos</a></h6>
+                        <button class="btn btn-success"><span style="margin-right:20px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Add a new record</button>
+                        <!-- <h6><a href="#"><span class="glyphicon glyphicon-heart-empty" style="cursor:pointer;"></span> Agregar a lista de deseos</a></h6> -->
                     </div>
                 </div>
-
                 <div class="col-xs-9">
                     <h3>Comments and ratings</h3>
-                    <% for (var i = 0; i < results.length; i++) { %>
+                    <% if (comments.length > 0) { %>
+                        <% for (var i = 0; i < comments.length; i++) { %>
+                            <!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
+                            <div class="container list-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <h3>User Comment Example</h3>
+                                    </div><!-- /col-sm-12 -->
+                                </div><!-- /row -->
+                                <div class="row">
+                                    <div class="col-sm-1">
+                                        <div class="thumbnail">
+                                            <img class="img-responsive user-photo" src="https://ssl.gstatic.com/accounts/ui/avatar_2x.png">
+                                        </div><!-- /thumbnail -->
+                                    </div><!-- /col-sm-1 -->
+
+                                        <div class="col-sm-5 list-group-item flex-column align-items-start active">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <strong>User ID: <%= comments[i]['uid'] %></strong>
+                                                    <div class="d-flex w-100 justify content-between">
+                                                        <span class="text-muted">Rating: <%= comments[i]['rating'] %> out of 5</span>
+                                                    </div>
+                                                </div>
+                                                <div class="panel-body" id="comment">
+                                                    <%= comments[i]['comments'] %>
+                                                </div><!-- /panel-body -->
+                                                <!-- <hr> -->
+                                                <div class="text-right">
+                                                    <samll>
+                                                        <span class="text-muted"><%= comments[i]['time'] %></span>
+                                                    </small>
+                                                </div><!-- /panel-body -->
+                                            </div><!-- /panel panel-default -->
+                                        </div><!-- /col-sm-5 -->
+
+                                </div><!-- /row -->
+
+                            </div><!-- /container -->
+                            <% } %>
+                        <% } else { %>
+                            <h4 class="text-primary">No comments here yet.</h4>
+                        <% } %>
+                        <form action="/user-comment/<%= product[0]['pid'] %>" method="POST">
+                            <div class="form-group">
+                                <label for="commentArea">Add a comment</label>
+                                <!-- <div> -->
+                                    <fieldset>
+                                        <div>
+                                            <label class="control-label" for="readOnlyUID">
+                                                User ID
+                                            </label>
+                                            <input class="form-control" id="readOnlyUID" type="text" placeholder="Readonly user ID here…" readonly="" field_signature="771735811" title="overall type: UNKNOWN_TYPE
+                                            server type: NO_SERVER_DATA
+                                            heuristic type: UNKNOWN_TYPE
+                                            label: Readonly input
+                                            parseable name: readOnlyUID
+                                            section: disabledInput_1-default
+                                            field signature: 771735811
+                                            form signature: 14325195704411944896" autofill-information="overall type: UNKNOWN_TYPE
+                                            server type: NO_SERVER_DATA
+                                            heuristic type: UNKNOWN_TYPE
+                                            label: Readonly input
+                                            parseable name: readOnlyUID
+                                            section: disabledInput_1-default
+                                            field signature: 771735811
+                                            form signature: 14325195704411944896" autofill-prediction="UNKNOWN_TYPE">
+                                        </div>
+                                    </fieldset>
+                                    <label class="col-form-label" for="inputDefault">How would you rating our product (out of 5 stars)?</label>
+                                    <input name="rating" value="5" type="number" max="5" min="0.5" step="0.5" class="form-control" placeholder="star rating" id="inputDefault" field_signature="2162400822" title="overall type: UNKNOWN_TYPE
+                                    server type: NO_SERVER_DATA
+                                    heuristic type: UNKNOWN_TYPE
+                                    label: Default input
+                                    parseable name: inputDefault
+                                    section: disabledInput_1-default
+                                    field signature: 2162400822
+                                    form signature: 14325195704411944896" autofill-information="overall type: UNKNOWN_TYPE
+                                    server type: NO_SERVER_DATA
+                                    heuristic type: UNKNOWN_TYPE
+                                    label: Default input
+                                    parseable name: inputDefault
+                                    section: disabledInput_1-default
+                                    field signature: 2162400822
+                                    form signature: 14325195704411944896" autofill-prediction="UNKNOWN_TYPE">
+                                    <!-- <div class="container"> -->
+                                        <!-- <div class="row"> -->
+
+                                        <!-- </div> -->
+                                    <!-- </div> -->
+                                <!-- </div> -->
+                                <textarea name="comment" class="form-control" id="commentArea" rows="3" field_signature="3789293528" form_signature="15652032749810445774" title="overall type: UNKNOWN_TYPE
+                                server type: NO_SERVER_DATA
+                                heuristic type: UNKNOWN_TYPE
+                                label: Example textarea
+                                parseable name: commentArea
+                                section: staticEmail_1-default
+                                field signature: 3789293528
+                                form signature: 15652032749810445774" autofill-information="overall type: UNKNOWN_TYPE
+                                server type: NO_SERVER_DATA
+                                heuristic type: UNKNOWN_TYPE
+                                label: Example textarea
+                                parseable name: commentArea
+                                section: staticEmail_1-default
+                                field signature: 3789293528
+                                form signature: 15652032749810445774" autofill-prediction="UNKNOWN_TYPE" spellcheck="false" placeholder="Write something useful here..."></textarea>
+                            </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary">Submit comment</button>
+                            <a href="/product-listing">
+                                <button type="button" class="btn btn-info">Back to products view</button>
+                            </a>
+                        </div>
+                    </form>
                     <!-- <ul class="menu-items">
                         <li class="active">Detalle del producto</li>
                         <li>Garantía</li>
@@ -83,73 +367,10 @@
         </div>
     </body>
     <script>
-        $(document).ready(function(){
-             //-- Click on detail
-             $("ul.menu-items > li").on("click",function(){
-                 $("ul.menu-items > li").removeClass("active");
-                 $(this).addClass("active");
-             })
-
-             $(".attr,.attr2").on("click",function(){
-                 var clase = $(this).attr("class");
-
-                 $("." + clase).removeClass("active");
-                 $(this).addClass("active");
-             })
-
-             //-- Click on QUANTITY
-             $(".btn-minus").on("click",function(){
-                 var now = $(".section > div > input").val();
-                 if ($.isNumeric(now)){
-                     if (parseInt(now) -1 > 0){ now--;}
-                     $(".section > div > input").val(now);
-                 }else{
-                     $(".section > div > input").val("1");
-                 }
-             })
-             $(".btn-plus").on("click",function(){
-                 var now = $(".section > div > input").val();
-                 if ($.isNumeric(now)){
-                     $(".section > div > input").val(parseInt(now)+1);
-                 }else{
-                     $(".section > div > input").val("1");
-                 }
-             })
-         })
+        var uid = getCookie("uid");
+        if (uid) {
+            // console.log("Run!");
+            $("#readOnlyUID").attr("placeholder", uid);
+        };
     </script>
 </html>
-<style>
-    ul > li{margin-right:25px;font-weight:lighter;cursor:pointer}
-li.active{border-bottom:3px solid silver;}
-
-.item-photo{display:flex;justify-content:center;align-items:center;border-right:1px solid #f6f6f6;}
-.menu-items{list-style-type:none;font-size:11px;display:inline-flex;margin-bottom:0;margin-top:20px}
-.btn-success{width:100%;border-radius:0;}
-.section{width:100%;margin-left:-15px;padding:2px;padding-left:15px;padding-right:15px;background:#f8f9f9}
-.title-price{margin-top:30px;margin-bottom:0;color:black}
-.title-attr{margin-top:0;margin-bottom:0;color:black;}
-.btn-minus{cursor:pointer;font-size:7px;display:flex;align-items:center;padding:5px;padding-left:10px;padding-right:10px;border:1px solid gray;border-radius:2px;border-right:0;}
-.btn-plus{cursor:pointer;font-size:7px;display:flex;align-items:center;padding:5px;padding-left:10px;padding-right:10px;border:1px solid gray;border-radius:2px;border-left:0;}
-div.section > div {width:100%;display:inline-flex;}
-div.section > div > input {margin:0;padding-left:5px;font-size:10px;padding-right:5px;max-width:18%;text-align:center;}
-.attr,.attr2{cursor:pointer;margin-right:5px;height:20px;font-size:10px;padding:2px;border:1px solid gray;border-radius:2px;}
-.attr.active,.attr2.active{ border:1px solid orange;}
-
-@media (max-width: 426px) {
-    .container {margin-top:0px !important;}
-    .container > .row{padding:0 !important;}
-    .container > .row > .col-xs-12.col-sm-5{
-        padding-right:0 ;
-    }
-    .container > .row > .col-xs-12.col-sm-9 > div > p{
-        padding-left:0 !important;
-        padding-right:0 !important;
-    }
-    .container > .row > .col-xs-12.col-sm-9 > div > ul{
-        padding-left:10px !important;
-
-    }
-    .section{width:104%;}
-    .menu-items{padding-left:0;}
-}
-</style>

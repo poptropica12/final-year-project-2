@@ -3,7 +3,8 @@ var conn = mysql.createConnection ({
     host: '127.0.0.1',
     user: 'root',
     password: '',
-    database: 'customer'
+    database: 'customer',
+    multipleStatements: true
 });
 conn.connect(function(err) {
     if (err) {
@@ -193,35 +194,100 @@ app.post('/user-login', (req, res, next) => {
 
 app.get('/product-listing', function (req, res) {
     conn.query("SELECT pid, name, price, image FROM product", function (error, results, fields) {
+        if (error) throw error;
         console.log(results);
         res.render('pages/product-listing', {uid: req.cookies['uid'], results: results});
     });
 });
 
 app.get('/product/:pid', function (req, res) {
-    console.log(req.params.pid);
+    // console.log(req.params.pid);
+    var sql = [];
+    sql[0] = "SELECT `user`.`uid`, `user`.`username`, `comment`.`comments`, `comment`.`rating`, DATE_FORMAT(`comment`.`time`, '%d-%m-%Y %r') AS time FROM `comment` INNER JOIN `user` ON `comment`.`uid` = `user`.`uid` WHERE `pid` = ?;";
+    sql[1] = "SELECT product.pid, product.name, product.price, product.image FROM product WHERE product.pid = ?;";
+    sql[2] = "SELECT pid, SUM(qty) AS qty FROM `sales` WHERE `pid` = ? GROUP BY `pid`"
     if (req.cookies['uid']) {
-        conn.query("SELECT * FROM `comment` INNER JOIN user ON comment.uid = user.uid WHERE pid = ?", [req.params.pid], function (error, results, fields) {
-
-        });
-        conn.query("SELECT product.pid, product.name, product.price, product.image, sales.date, SUM(sales.qty) AS qty, sales.uid FROM sales INNER JOIN product ON sales.pid = product.pid WHERE product.pid = ? GROUP BY product.pid;", [req.params.pid], function (error, results, fields) {
+        conn.query(sql[0] + sql[1] + sql[2], [req.params.pid, req.params.pid, req.params.pid], function (error, results, fields) {
             if (error) throw error;
-            console.log(req.params.pid);
-            console.log(results);
-            if (results) {
-                res.render('pages/product', {results: results});
+            // console.error(results);
+            if (results[0] == "") {
+                results[0]["comments"] = null;
+                console.log("results[0] nothing fetched.");
             }
             else {
-                res.render('pages/product', {qty: 0, results: undefined});
+                console.log("results[0] = ", results[0]);
             };
-            // console.log(results);
+            if (results[1] == "") {
+                console.log("results[1] nothing fetched. Please check.");
+            }
+            else {
+                console.log("results[1] = ", results[1]);
+            };
+            console.log(results[2] && true);
+            console.log("results[2] = ", results[2]);
+            console.log(results[2].length);
+            if (results[2] == "") {
+                console.log(results[2]);
+                results[2][0] = {"qty": 0};
+                console.log("results[2] nothing fetched.")
+                console.log(results[2][0]['qty']);
+            }
+            else {
+                console.log(results[2]);
+                console.log("results[2][0]['qty'] = ", results[2][0]['qty']);
+            };
+            res.render('pages/product', {comments: results[0], product: results[1], qty: results[2][0]['qty']});
+            // results[0] = results[0];
+            // if (!results[0] && results[0] != undefined) {
+            //     results[0] = null;
+            // };
         });
-        // res.render('pages/product');
     }
     else {
         res.redirect('/login?login=' + false);
     };
 });
+app.post('/user-comment/:pid', (req, res, next) => {
+    if (req.cookies['uid']) {
+        conn.query("INSERT INTO `comment` (comments, pid, rating, uid) VALUES(?, ?, ?, ?)", [req.body.comment, req.params.pid, req.body.rating, req.cookies["uid"]], function (error, results, fields) {
+            if (error) throw error;
+            console.log(results.affectedRows + "row(s) has/have been inserted successfully.");
+            res.redirect("/product-listing");
+        });
+    }
+    else {
+        res.redirect('/login?login=' + false);
+    };
+});
+app.post('/new-sales/:pid', (req, res, next) => {
+    
+})
+        // console.error("Comments variable below: ");
+        // console.log(results[0]);
+        // var product = conn.query("SELECT product.pid, product.name, product.price, product.image FROM product WHERE product.pid = ?", [req.params.pid]);
+
+            // if (results) {
+            //     res.render('pages/product', {results: results});
+            // }
+            // else {
+            //
+            //     res.render('pages/product?qty=0', {results: undefined, comment: comments});
+            // };
+            // console.log(results);
+        // });
+    //     console.log("@@@@@@@@@@@@@@@@@@");
+    //     console.log(product);
+    //     conn.query("SELECT pid, SUM(qty) FROM `sales` WHERE `pid` = ? GROUP BY `pid`", [req.params.pid], function (error, results, fields) {
+    //         if (error) throw error;
+    //         console.log(results);
+    //         if (results[0] == undefined) {
+    //             results[0]['qty'] = 0;
+    //         };
+    //         res.render('pages/product', {comments: comments, product: product, qty: results});
+    //             // res.render({comments: comments, product: product, qty: results});
+    //         // };
+    //     });
+    //     // res.render('pages/product');
 
 // console.log(`${ab}`)
 
