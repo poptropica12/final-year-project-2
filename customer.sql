@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.5
+-- version 4.8.3
 -- https://www.phpmyadmin.net/
 --
--- 主機： 127.0.0.1
--- 產生時間： 2019 年 06 月 02 日 16:39
--- 伺服器版本： 10.1.40-MariaDB
--- PHP 版本： 7.3.5
+-- Host: localhost:3306
+-- Generation Time: Jun 02, 2019 at 05:37 PM
+-- Server version: 5.7.24
+-- PHP Version: 7.2.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -19,13 +19,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- 資料庫： `customer`
+-- Database: `customer`
 --
 
 -- --------------------------------------------------------
 
 --
--- 資料表結構 `comment`
+-- Table structure for table `comment`
 --
 
 CREATE TABLE `comment` (
@@ -38,7 +38,7 @@ CREATE TABLE `comment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- 傾印資料表的資料 `comment`
+-- Dumping data for table `comment`
 --
 
 INSERT INTO `comment` (`cid`, `comments`, `rating`, `pid`, `uid`, `time`) VALUES
@@ -49,7 +49,7 @@ INSERT INTO `comment` (`cid`, `comments`, `rating`, `pid`, `uid`, `time`) VALUES
 -- --------------------------------------------------------
 
 --
--- 資料表結構 `product`
+-- Table structure for table `product`
 --
 
 CREATE TABLE `product` (
@@ -61,7 +61,7 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- 傾印資料表的資料 `product`
+-- Dumping data for table `product`
 --
 
 INSERT INTO `product` (`pid`, `name`, `price`, `cost`, `image`) VALUES
@@ -73,7 +73,7 @@ INSERT INTO `product` (`pid`, `name`, `price`, `cost`, `image`) VALUES
 -- --------------------------------------------------------
 
 --
--- 資料表結構 `sales`
+-- Table structure for table `sales`
 --
 
 CREATE TABLE `sales` (
@@ -85,7 +85,7 @@ CREATE TABLE `sales` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- 傾印資料表的資料 `sales`
+-- Dumping data for table `sales`
 --
 
 INSERT INTO `sales` (`cid`, `qty`, `pid`, `date`, `uid`) VALUES
@@ -94,12 +94,14 @@ INSERT INTO `sales` (`cid`, `qty`, `pid`, `date`, `uid`) VALUES
 (3, 10, 1, '2019-05-21', 3),
 (4, 3, 1, '2019-04-23', 2),
 (5, 1, 4, '2012-12-12', 4),
-(6, 1, 4, '2012-12-12', 4);
+(6, 1, 4, '2012-12-12', 4),
+(7, 6, 3, '2019-06-12', 2),
+(8, 3, 3, '2019-06-14', 2);
 
 -- --------------------------------------------------------
 
 --
--- 資料表結構 `user`
+-- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
@@ -110,7 +112,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- 傾印資料表的資料 `user`
+-- Dumping data for table `user`
 --
 
 INSERT INTO `user` (`uid`, `username`, `password`, `type`) VALUES
@@ -122,57 +124,57 @@ INSERT INTO `user` (`uid`, `username`, `password`, `type`) VALUES
 (6, '123@ad.com', '123', 'normal');
 
 --
--- 已傾印資料表的索引
+-- Indexes for dumped tables
 --
 
 --
--- 資料表索引 `comment`
+-- Indexes for table `comment`
 --
 ALTER TABLE `comment`
   ADD PRIMARY KEY (`cid`);
 
 --
--- 資料表索引 `product`
+-- Indexes for table `product`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`pid`);
 
 --
--- 資料表索引 `sales`
+-- Indexes for table `sales`
 --
 ALTER TABLE `sales`
   ADD PRIMARY KEY (`cid`);
 
 --
--- 資料表索引 `user`
+-- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`uid`);
 
 --
--- 在傾印的資料表使用自動增長(AUTO_INCREMENT)
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- 使用資料表自動增長(AUTO_INCREMENT) `comment`
+-- AUTO_INCREMENT for table `comment`
 --
 ALTER TABLE `comment`
   MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- 使用資料表自動增長(AUTO_INCREMENT) `product`
+-- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
   MODIFY `pid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- 使用資料表自動增長(AUTO_INCREMENT) `sales`
+-- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- 使用資料表自動增長(AUTO_INCREMENT) `user`
+-- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
   MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;

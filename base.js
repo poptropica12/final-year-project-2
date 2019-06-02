@@ -2,7 +2,7 @@ var mysql = require('mysql');
 var conn = mysql.createConnection ({
     host: '127.0.0.1',
     user: 'root',
-    password: '',
+    password: 'root',
     database: 'customer',
     multipleStatements: true
 });
@@ -300,7 +300,7 @@ app.get('/dashboard', (req, res, next) => {
         conn.query("SELECT * FROM sales ORDER BY date DESC", function (error, results, fields) {
             if (error) throw error;
             // console.log(JSON.stringify(results[0]));
-            res.render('/pages/dashboard');
+            res.render('pages/dashboard', {uid: req.cookies['uid']});
         });
 
         // res.render("pages/dashboard");
@@ -310,21 +310,41 @@ app.get('/dashboard', (req, res, next) => {
     };
 });
 
-app.get('/test', (req, res, next) => {
-    if (req.cookies['uid']) {
-        conn.query("SELECT * FROM sales ORDER BY date DESC", function (error, results, fields) {
+app.get('/annual-sales', (req, res, next) => {
+    if(req.cookies['uid']) {
+        var sql = [];
+        sql[0] = "SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid, YEAR(date);";
+        sql[1] = "SELECT * FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS total FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY sales.pid) AS a INNER JOIN (SELECT MAX(Total_sales) AS Maximum FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total_sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY pid, YEAR(date)) AS temp) AS b ON a.total = b.Maximum";
+        conn.query(sql[0] + sql[1], function (error, results, fields) {
+            console.log(results[0]);
             if (error) throw error;
-            res.send({"Hello": "World"});
-            // console.log(JSON.stringify(results[0]));
-            // res.render('/pages/dashboard', {results: results});
+            if (results[0] == "") {
+                results[0] = {"Total sales": 0};
+            }
+
+            res.render('pages/annual-sales', {uid: req.cookies["uid"], results: results});
         });
 
-        // res.render("pages/dashboard");
+    }
+    else {
+        res.redirect('/login?login=' + false);
     };
-    // else {
-    //     res.redirect('/login?login=' + false);
-    // };
 });
+// app.get('/test', (req, res, next) => {
+//     if (req.cookies['uid']) {
+//         conn.query("SELECT * FROM sales ORDER BY date DESC", function (error, results, fields) {
+//             if (error) throw error;
+//             res.send({"Hello": "World"});
+//             // console.log(JSON.stringify(results[0]));
+//             // res.render('/pages/dashboard', {results: results});
+//         });
+//
+//         // res.render("pages/dashboard");
+//     };
+//     // else {
+//     //     res.redirect('/login?login=' + false);
+//     // };
+// });
         // console.error("Comments variable below: ");
         // console.log(results[0]);
         // var product = conn.query("SELECT product.pid, product.name, product.price, product.image FROM product WHERE product.pid = ?", [req.params.pid]);
