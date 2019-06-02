@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2019 年 05 月 31 日 14:26
+-- 產生時間： 2019 年 06 月 02 日 05:33
 -- 伺服器版本： 10.1.40-MariaDB
 -- PHP 版本： 7.3.5
 
@@ -33,16 +33,18 @@ CREATE TABLE `comment` (
   `comments` text,
   `rating` decimal(2,1) NOT NULL,
   `pid` int(11) NOT NULL,
-  `uid` int(11) NOT NULL
+  `uid` int(11) NOT NULL,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- 傾印資料表的資料 `comment`
 --
 
-INSERT INTO `comment` (`cid`, `comments`, `rating`, `pid`, `uid`) VALUES
-(1, 'I love this, haha.', '0.9', 1, 1),
-(2, 'I love this, haha', '4.5', 1, 3);
+INSERT INTO `comment` (`cid`, `comments`, `rating`, `pid`, `uid`, `time`) VALUES
+(1, 'I love this, haha.', '0.9', 1, 1, '2019-06-01 13:34:09'),
+(2, 'I love this, haha', '4.5', 1, 3, '2019-06-01 13:34:09'),
+(3, 'I hate green :(', '0.5', 3, 4, '2019-06-01 13:34:09');
 
 -- --------------------------------------------------------
 
@@ -152,7 +154,7 @@ ALTER TABLE `user`
 -- 使用資料表自動增長(AUTO_INCREMENT) `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- 使用資料表自動增長(AUTO_INCREMENT) `product`
