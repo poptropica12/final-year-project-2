@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <% include ../partial/head %>
         <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
@@ -208,7 +209,9 @@
 
                     <!-- Botones de compra -->
                     <div class="section" style="padding-bottom:20px;">
-                        <button class="btn btn-success"><span style="margin-right:20px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Add a new record</button>
+                        <a href="/records/<%= product[0]['pid'] %>">
+                            <button class="btn btn-success"><span style="margin-right:20px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>View sales details</button>
+                        </a>
                         <!-- <h6><a href="#"><span class="glyphicon glyphicon-heart-empty" style="cursor:pointer;"></span> Agregar a lista de deseos</a></h6> -->
                     </div>
                 </div>
@@ -266,7 +269,7 @@
                                             <label class="control-label" for="readOnlyUID">
                                                 User ID
                                             </label>
-                                            <input class="form-control" id="readOnlyUID" type="text" placeholder="Readonly user ID here…" readonly="" field_signature="771735811" title="overall type: UNKNOWN_TYPE
+                                            <input required class="form-control" id="readOnlyUID" type="text" placeholder="Readonly user ID here…" readonly="" field_signature="771735811" title="overall type: UNKNOWN_TYPE
                                             server type: NO_SERVER_DATA
                                             heuristic type: UNKNOWN_TYPE
                                             label: Readonly input
@@ -284,7 +287,7 @@
                                         </div>
                                     </fieldset>
                                     <label class="col-form-label" for="inputDefault">How would you rating our product (out of 5 stars)?</label>
-                                    <input name="rating" value="5" type="number" max="5" min="0.5" step="0.5" class="form-control" placeholder="star rating" id="inputDefault" field_signature="2162400822" title="overall type: UNKNOWN_TYPE
+                                    <input required name="rating" value="5" type="number" max="5" min="0.5" step="0.5" class="form-control" placeholder="star rating" id="inputDefault" field_signature="2162400822" title="overall type: UNKNOWN_TYPE
                                     server type: NO_SERVER_DATA
                                     heuristic type: UNKNOWN_TYPE
                                     label: Default input
@@ -305,7 +308,7 @@
                                         <!-- </div> -->
                                     <!-- </div> -->
                                 <!-- </div> -->
-                                <textarea name="comment" class="form-control" id="commentArea" rows="3" field_signature="3789293528" form_signature="15652032749810445774" title="overall type: UNKNOWN_TYPE
+                                <textarea required name="comment" class="form-control" id="commentArea" rows="3" field_signature="3789293528" form_signature="15652032749810445774" title="overall type: UNKNOWN_TYPE
                                 server type: NO_SERVER_DATA
                                 heuristic type: UNKNOWN_TYPE
                                 label: Example textarea
@@ -365,6 +368,7 @@
                 </div>
             </div>
         </div>
+        <% include ../partial/footer %>
     </body>
     <script>
         var uid = getCookie("uid");

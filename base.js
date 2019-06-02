@@ -21,6 +21,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 app.use(cookieParser());
 app.set('view engine', 'ejs');
@@ -52,19 +53,17 @@ app.get('/', function (req, res) {
     // }
     // else {
     if (req.cookies['uid']) {
-        res.render('pages/home', {  uid: req.cookies['uid'],
-                                    type: req.cookies['type']})
+        res.render('pages/home', {  uid: req.cookies['uid'], type: req.cookies['type']})
     }
     // console.log(login);
     else {
-        res.render('pages/home',  {  uid: "",
-                                    type: ""})
+        res.render('pages/home',  {  uid: "", type: ""})
     };
 });
 app.get('/register', (req, res) => {
     failure = req.query.status;
     // console.log('abc')
-    console.log(failure);
+    // console.log(failure);
     // knex.from('user').select('username', 'password', 'type').then((rows) => {
     //   // for (row of rows) {
     //     console.log(rows);
@@ -93,11 +92,11 @@ app.get('/logout',(req, res) => {
 });
 
 app.post('/user-register', (req, res, next) => {
-    console.log("req.body = " + req.body);
-    console.log("req.body.email =" + req.body.email);
+    // console.log("req.body = " + req.body);
+    // console.log("req.body.email =" + req.body.email);
     conn.query('SELECT * FROM user WHERE username=?', [req.body.email], function (error, results, fields) {
         if (error) throw error;
-        console.log("results = " + results);
+        // console.log("results = " + results);
         if (results != "") {
             failure = true;
             res.redirect('/register?status=' + failure);
@@ -120,13 +119,13 @@ app.post('/user-register', (req, res, next) => {
 
 app.post('/user-login', (req, res, next) => {
     // console.log(req.body);
-    console.log("Login: req.body.username = " + req.body.username);
+    // console.log("Login: req.body.username = " + req.body.username);
     if (req.body.username) {
         if (req.body.password) {
             conn.query("SELECT * FROM user WHERE username = ? AND password = ?", [req.body.username, req.body.password], function (error, results, fields) {
-                console.error(`SQL = SELECT * FROM user WHERE username = ${req.body.username} AND password = ${req.body.password}`);
+                // console.error(`SQL = SELECT * FROM user WHERE username = ${req.body.username} AND password = ${req.body.password}`);
                 if (error) throw error;
-                console.error("results = " + results + "typeof = " + typeof(results));
+                // console.error("results = " + results + "typeof = " + typeof(results));
                 // if (results) console.error("username = " + results[0]);
                 if (results[0] != undefined) {
                     username = results[0]['username'];
@@ -195,7 +194,7 @@ app.post('/user-login', (req, res, next) => {
 app.get('/product-listing', function (req, res) {
     conn.query("SELECT pid, name, price, image FROM product", function (error, results, fields) {
         if (error) throw error;
-        console.log(results);
+        // console.log(results);
         res.render('pages/product-listing', {uid: req.cookies['uid'], results: results});
     });
 });
@@ -215,26 +214,26 @@ app.get('/product/:pid', function (req, res) {
                 console.log("results[0] nothing fetched.");
             }
             else {
-                console.log("results[0] = ", results[0]);
+                // console.log("results[0] = ", results[0]);
             };
             if (results[1] == "") {
                 console.log("results[1] nothing fetched. Please check.");
             }
             else {
-                console.log("results[1] = ", results[1]);
+                // console.log("results[1] = ", results[1]);
             };
-            console.log(results[2] && true);
-            console.log("results[2] = ", results[2]);
-            console.log(results[2].length);
+            // console.log(results[2] && true);
+            // console.log("results[2] = ", results[2]);
+            // console.log(results[2].length);
             if (results[2] == "") {
-                console.log(results[2]);
+                // console.log(results[2]);
                 results[2][0] = {"qty": 0};
                 console.log("results[2] nothing fetched.")
-                console.log(results[2][0]['qty']);
+                // console.log(results[2][0]['qty']);
             }
             else {
-                console.log(results[2]);
-                console.log("results[2][0]['qty'] = ", results[2][0]['qty']);
+                // console.log(results[2]);
+                // console.log("results[2][0]['qty'] = ", results[2][0]['qty']);
             };
             res.render('pages/product', {comments: results[0], product: results[1], qty: results[2][0]['qty']});
             // results[0] = results[0];
@@ -249,6 +248,7 @@ app.get('/product/:pid', function (req, res) {
 });
 app.post('/user-comment/:pid', (req, res, next) => {
     if (req.cookies['uid']) {
+        console.log(req.body.date);
         conn.query("INSERT INTO `comment` (comments, pid, rating, uid) VALUES(?, ?, ?, ?)", [req.body.comment, req.params.pid, req.body.rating, req.cookies["uid"]], function (error, results, fields) {
             if (error) throw error;
             console.log(results.affectedRows + "row(s) has/have been inserted successfully.");
@@ -259,9 +259,72 @@ app.post('/user-comment/:pid', (req, res, next) => {
         res.redirect('/login?login=' + false);
     };
 });
-app.post('/new-sales/:pid', (req, res, next) => {
-    
-})
+app.get('/records/:pid', (req, res, next) => {
+    if (req.cookies['uid']) {
+        var sql = []
+        sql[0] = "SELECT * FROM product WHERE pid = ?;";
+        sql[1] = "SELECT record.*, total.total FROM ((SELECT sales.cid, sales.qty, sales.pid, DATE_FORMAT(sales.date, '%d-%m-%Y') AS date, sales.uid, product.name FROM sales INNER JOIN product ON sales.pid = product.pid WHERE sales.pid = ?) AS record) INNER JOIN ((SELECT SUM(qty) AS total, pid FROM `sales` WHERE pid = ? GROUP BY pid) AS total) ON record.pid = total.pid"
+        conn.query(sql[0] + sql[1], [req.params.pid, req.params.pid, req.params.pid], function (error, results, fields) {
+            if (error) throw error;
+            if (results[0] == "" || results[0] == undefined) {
+                console.log("Something is wrong, this product does not exist.");
+            };
+            if (results[1] == "" || results[1] == undefined) {
+                results[1][0] = {"total": 0};
+                results[1][0] = {"pid": req.params.pid};
+                // res.render("/pages/records", {uid: req.cookies['uid'], records: results})
+            };
+            res.render("pages/records", {uid: req.cookies['uid'], records: results});
+        });
+    }
+    else {
+        res.redirect('/login?login=' + false);
+    };
+});
+app.post('/new-record/:pid', (req, res, next) => {
+    if (req.cookies['uid']) {
+        console.log("Date = ", req.body.date);
+        console.log("req.params.pid = ", req.params.pid);
+        conn.query("INSERT INTO `sales` (date, pid, qty, uid) VALUES(STR_TO_DATE(?, '%Y-%m-%d'), ?, ?, ?);", [req.body.date, req.params.pid, req.body.qty, req.cookies['uid']], function (error, results, fields) {
+            if (error) throw error;
+            console.log(results.affectedRows + "row(s) has/have been inserted successfully.");
+            res.redirect("/product-listing");
+        });
+    }
+    else {
+        res.redirect('/login?login=' + false);
+    };
+});
+app.get('/dashboard', (req, res, next) => {
+    if (req.cookies['uid']) {
+        conn.query("SELECT * FROM sales ORDER BY date DESC", function (error, results, fields) {
+            if (error) throw error;
+            // console.log(JSON.stringify(results[0]));
+            res.render('/pages/dashboard');
+        });
+
+        // res.render("pages/dashboard");
+    }
+    else {
+        res.redirect('/login?login=' + false);
+    };
+});
+
+app.get('/test', (req, res, next) => {
+    if (req.cookies['uid']) {
+        conn.query("SELECT * FROM sales ORDER BY date DESC", function (error, results, fields) {
+            if (error) throw error;
+            res.send({"Hello": "World"});
+            // console.log(JSON.stringify(results[0]));
+            // res.render('/pages/dashboard', {results: results});
+        });
+
+        // res.render("pages/dashboard");
+    };
+    // else {
+    //     res.redirect('/login?login=' + false);
+    // };
+});
         // console.error("Comments variable below: ");
         // console.log(results[0]);
         // var product = conn.query("SELECT product.pid, product.name, product.price, product.image FROM product WHERE product.pid = ?", [req.params.pid]);

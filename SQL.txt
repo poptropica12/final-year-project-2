@@ -1,0 +1,5 @@
+((SELECT SUM(qty) AS total, pid FROM `sales` WHERE pid = 1 GROUP BY pid) AS total); b
+
+((SELECT sales.*, product.name FROM sales INNER JOIN product ON sales.pid = product.pid WHERE sales.pid = 1) AS record); a
+
+SELECT record.*, total.total FROM ((SELECT sales.cid, sales.qty, sales.pid, DATE_FORMAT(sales.date, '%d-%m-%Y') AS date, sales.uid, product.name FROM sales INNER JOIN product ON sales.pid = product.pid WHERE sales.pid = 1) AS record) INNER JOIN ((SELECT SUM(qty) AS total, pid FROM `sales` WHERE pid = 1 GROUP BY pid) AS total) ON record.pid = total.pid 
