@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2019 年 06 月 02 日 05:33
+-- 產生時間： 2019 年 06 月 02 日 16:39
 -- 伺服器版本： 10.1.40-MariaDB
 -- PHP 版本： 7.3.5
 
@@ -91,7 +91,10 @@ CREATE TABLE `sales` (
 INSERT INTO `sales` (`cid`, `qty`, `pid`, `date`, `uid`) VALUES
 (1, 1, 1, '2019-05-31', 4),
 (2, 5, 3, '2019-05-22', 3),
-(3, 10, 1, '2019-05-21', 3);
+(3, 10, 1, '2019-05-21', 3),
+(4, 3, 1, '2019-04-23', 2),
+(5, 1, 4, '2012-12-12', 4),
+(6, 1, 4, '2012-12-12', 4);
 
 -- --------------------------------------------------------
 
@@ -166,7 +169,7 @@ ALTER TABLE `product`
 -- 使用資料表自動增長(AUTO_INCREMENT) `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- 使用資料表自動增長(AUTO_INCREMENT) `user`
