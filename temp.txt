@@ -1,0 +1,24 @@
+<p>
+                    <% var str = "" %>
+                    <% for (var i = 0; i < results[1].length; i++) { %>
+                        <% str += results[1][i]['name'] + ", "%>
+                    <% } %>
+                    <%= str %>
+                    <% if (results[1].length == 1) { %>
+                        has
+                    <% } else { %>
+                        have
+                    <% } %>
+                    the best sales among all products, keep it up.
+                </p>
+
+
+
+
+
+<p>From the table above, </p>
+                    <% for (var i = 0; i < results[3].length; i++) { %>
+                        <p>
+                            in the previous week, there are <%= results[3][i]['number'] %> transaction(s) for <%= results[3][i]['name'] %> (<%= results[3][i]['pid'] %>).
+                        </p>
+                    <% } %>

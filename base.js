@@ -313,7 +313,7 @@ app.get('/dashboard', (req, res, next) => {
 app.get('/annual-sales', (req, res, next) => {
     if(req.cookies['uid']) {
         var sql = [];
-        sql[0] = "SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid, YEAR(date);";
+        sql[0] = "SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid, YEAR(date) ORDER BY `Total sales` DESC;";
         sql[1] = "SELECT * FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS total FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY sales.pid) AS a INNER JOIN (SELECT MAX(Total_sales) AS Maximum FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total_sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY pid, YEAR(date)) AS temp) AS b ON a.total = b.Maximum;";
         sql[2] = "SELECT YEAR(date) AS \"Year\", sales.pid, sales.qty, product.name FROM `sales` INNER JOIN product ON sales.pid = product.pid WHERE YEAR(date) = YEAR(SYSDATE());";
         sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(date) = YEAR(SYSDATE()) GROUP BY sales.pid;";
@@ -335,7 +335,7 @@ app.get('/annual-sales', (req, res, next) => {
 app.get('/monthly-sales', (req, res, next) => {
     if (req.cookies['uid']) {
         var sql = [];
-        sql[0] = "SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total sales\", MONTHNAME(STR_TO_DATE(MONTH(sales.date), '%m')) AS \"Month\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid, MONTH(date);";
+        sql[0] = "SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total sales\", MONTHNAME(STR_TO_DATE(MONTH(sales.date), '%m')) AS \"Month\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid, MONTH(date) ORDER BY `Total sales` DESC;";
         sql[1] = "SELECT * FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS total FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY sales.pid) AS a INNER JOIN (SELECT MAX(Total_sales) AS Maximum FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total_sales\", MONTH(sales.date) AS \"Month\" FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY pid, MONTH(date)) AS temp) AS b ON a.total = b.Maximum;";
         sql[2] = "SELECT MONTHNAME(STR_TO_DATE(MONTH(date), '%m')) AS \"Month\", sales.pid, sales.qty, product.name FROM `sales` INNER JOIN product ON sales.pid = product.pid WHERE MONTH(date) = MONTH(SYSDATE());";
         sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE MONTH(date) = MONTH(SYSDATE()) GROUP BY sales.pid;";
@@ -357,10 +357,10 @@ app.get('/monthly-sales', (req, res, next) => {
 app.get('/weekly-sales', (req, res, next) => {
     if (req.cookies['uid']) {
         var sql = [];
-        sql[0] = "SELECT `sales`.`pid`, `product`.`name`, SUM(`sales`.`qty`) AS \"Total sales\", `sales`.`date` FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY `pid`;";
-        sql[1] = "SELECT * FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS total FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY sales.pid) AS a INNER JOIN (SELECT MAX(Total_sales) AS Maximum FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total_sales\", MONTH(sales.date) AS \"Month\" FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY pid, MONTH(date)) AS temp) AS b ON a.total = b.Maximum;";
-        sql[2] = "SELECT MONTHNAME(STR_TO_DATE(MONTH(date), '%m')) AS \"Month\", sales.pid, sales.qty, product.name FROM `sales` INNER JOIN product ON sales.pid = product.pid WHERE MONTH(date) = MONTH(SYSDATE());";
-        sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE MONTH(date) = MONTH(SYSDATE()) GROUP BY sales.pid;";
+        sql[0] = "SELECT `sales`.`pid`, `product`.`name`, SUM(`sales`.`qty`) AS \"Total sales\", DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS `date` FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY `pid` ORDER BY `Total sales` DESC;";
+        sql[1] = "SELECT * FROM (SELECT `sales`.`pid`, `product`.`name`, SUM(`sales`.`qty`) AS \"Total sales\", DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS `date` FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY `pid`) AS a INNER JOIN (SELECT MAX(`a`.`Total sales`) AS \"Maximum\" FROM (SELECT `sales`.`pid`, `product`.`name`, SUM(`sales`.`qty`) AS \"Total sales\", DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS date FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY `pid`) AS a) AS b ON a.`Total sales` = b.`Maximum`;";
+        sql[2] = "SELECT DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS `date`, `sales`.`pid`, `sales`.`qty`, `product`.`name` FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE());";
+        sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid;";
         conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
             // console.log(results[0]);
             if (error) throw error;
@@ -368,8 +368,31 @@ app.get('/weekly-sales', (req, res, next) => {
                 results[0] = {"Total sales": 0};
             }
 
-            res.render('pages/monthly-sales', {uid: req.cookies["uid"], results: results});
+            res.render('pages/weekly-sales', {uid: req.cookies["uid"], results: results});
         });
+    }
+    else {
+        res.redirect('/login?login=' + false);
+    };
+});
+
+app.get('/annual-revenue', (req, res, next) => {
+    if(req.cookies['uid']) {
+        var sql = [];
+        sql[0] = "SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC;";
+        sql[1] = "SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC;";
+        sql[2] = "SELECT * FROM (SELECT product.pid, product.name, product.price, sales.qty, YEAR(sales.date) AS \"Year\", SUM(product.price * sales.qty) AS \"Total revenue\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY product.pid) AS a WHERE a.`Total revenue` >= ALL(SELECT SUM(product.price * sales.qty) AS \"Total revenue\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY product.pid);";
+        // sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(date) = YEAR(SYSDATE()) GROUP BY sales.pid;";
+        conn.query(sql[0] + sql[1] + sql[2], function (error, results, fields) {
+            // console.log(results[0]);
+            if (error) throw error;
+            if (results[0] == "") {
+                results[0] = {"Total sales": 0};
+            }
+
+            res.render('pages/annual-revenue', {uid: req.cookies["uid"], results: results});
+        });
+
     }
     else {
         res.redirect('/login?login=' + false);

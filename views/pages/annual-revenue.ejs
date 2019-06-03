@@ -331,55 +331,65 @@
         <!-- Begin Page Content -->
         <div class="container-fluid">
             <% if (results[0][0]['Total sales'] > 0) { %>
-                <h1 class="display-5">All <%= results[0][0]['date'] %> weekly sales results are shown below: </h1>
+                <h1 class="display-5">All <%= results[0][0]['date'] %> annual revenue results are shown below: </h1>
                 <table class="table table-hover">
                     <thead>
                         <th scope="col">PID</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Sales Week</th>
+                        <th scope="col">Price</th>
                         <th scope="col">Total sales</th>
+                        <th scope="col">Total revenue</th>
+                        <th scope="col">Sales Year</th>
                     </thead>
                     <tbody>
                         <% for (var i = 0; i < results[0].length; i++) { %>
                             <tr class="table-info">
                                 <td scope="row"><%= results[0][i]['pid'] %></td>
                                 <td><%= results[0][i]['name'] %></td>
-                                <td><%= results[0][i]['date'] %></td>
+                                <td>$<%= results[0][i]['price'].toFixed(2) %></td>
                                 <td><%= results[0][i]['Total sales'] %></td>
+                                <td>$<%= results[0][i]['Total revenue'].toFixed(2) %></td>
+                                <td><%= results[0][i]['Year'] %></td>
                             </tr>
                         <% } %>
                     </tbody>
                 </table>
-
-            <div>
-                <h3>Analysis</h3>
                 <p>
                     <% var str = "" %>
-                    <% for (var i = 0; i < results[1].length; i++) { %>
-                        <% str += results[1][i]['name'] + ", "%>
+                    <% for (var i = 0; i < results[2].length; i++) { %>
+                        <% str += results[2][i]['name'] + ", "%>
                     <% } %>
                     <%= str %>
-                    <% if (results[1].length == 1) { %>
+                    <% if (results[2].length == 1) { %>
                         has
                     <% } else { %>
                         have
                     <% } %>
-                    the best sales among all products, keep it up.
+                    the most revenue made among all products, keep it up.
                 </p>
+            <div>
+                <h3>Analysis</h3>
+
                 <table class="table table-hover">
                     <thead>
                         <th scope="col">PID</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Sales Week</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Cost</th>
                         <th scope="col">Total sales</th>
+                        <th scope="col">Total profit</th>
+                        <th scope="col">Sales Year</th>
                     </thead>
                     <tbody>
-                        <% for (var i = 0; i < results[2].length; i++) { %>
+                        <% for (var i = 0; i < results[1].length; i++) { %>
                             <tr class="table-info">
-                                <td scope="row"><%= results[2][i]['pid'] %></td>
-                                <td><%= results[2][i]['name'] %></td>
-                                <td><%= results[2][i]['date'] %></td>
-                                <td><%= results[2][i]['qty'] %></td>
+                                <td scope="row"><%= results[1][i]['pid'] %></td>
+                                <td><%= results[1][i]['name'] %></td>
+                                <td>$<%= results[1][i]['price'].toFixed(2) %></td>
+                                <td>$<%= results[1][i]['cost'].toFixed(2) %></td>
+                                <td><%= results[1][i]['Total sales'] %></td>
+                                <td>$<%= results[1][i]['Total profit'].toFixed(2) %></td>
+                                <td><%= results[1][i]['Year'] %></td>
                             </tr>
                         <% } %>
                     </tbody>

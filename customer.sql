@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 4.8.5
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Jun 02, 2019 at 05:37 PM
--- Server version: 5.7.24
--- PHP Version: 7.2.10
+-- 主機： 127.0.0.1
+-- 產生時間： 2019 年 06 月 03 日 12:47
+-- 伺服器版本： 10.1.40-MariaDB
+-- PHP 版本： 7.3.5
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -19,13 +19,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `customer`
+-- 資料庫： `customer`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `comment`
+-- 資料表結構 `comment`
 --
 
 CREATE TABLE `comment` (
@@ -38,18 +38,19 @@ CREATE TABLE `comment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `comment`
+-- 傾印資料表的資料 `comment`
 --
 
 INSERT INTO `comment` (`cid`, `comments`, `rating`, `pid`, `uid`, `time`) VALUES
 (1, 'I love this, haha.', '0.9', 1, 1, '2019-06-01 13:34:09'),
 (2, 'I love this, haha', '4.5', 1, 3, '2019-06-01 13:34:09'),
-(3, 'I hate green :(', '0.5', 3, 4, '2019-06-01 13:34:09');
+(3, 'I hate green :(', '0.5', 3, 4, '2019-06-01 13:34:09'),
+(4, 'I love this.', '5.0', 3, 4, '2019-06-03 07:14:39');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `product`
+-- 資料表結構 `product`
 --
 
 CREATE TABLE `product` (
@@ -61,7 +62,7 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `product`
+-- 傾印資料表的資料 `product`
 --
 
 INSERT INTO `product` (`pid`, `name`, `price`, `cost`, `image`) VALUES
@@ -73,7 +74,7 @@ INSERT INTO `product` (`pid`, `name`, `price`, `cost`, `image`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sales`
+-- 資料表結構 `sales`
 --
 
 CREATE TABLE `sales` (
@@ -85,7 +86,7 @@ CREATE TABLE `sales` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `sales`
+-- 傾印資料表的資料 `sales`
 --
 
 INSERT INTO `sales` (`cid`, `qty`, `pid`, `date`, `uid`) VALUES
@@ -96,12 +97,17 @@ INSERT INTO `sales` (`cid`, `qty`, `pid`, `date`, `uid`) VALUES
 (5, 1, 4, '2012-12-12', 4),
 (6, 1, 4, '2012-12-12', 4),
 (7, 6, 3, '2019-06-12', 2),
-(8, 3, 3, '2019-06-14', 2);
+(8, 3, 3, '2019-06-14', 2),
+(9, 50, 2, '2019-06-12', 2),
+(10, 4, 3, '2019-06-19', 4),
+(11, 1, 2, '2019-06-03', 5),
+(12, 12, 3, '2019-05-27', 4),
+(13, 4, 3, '2019-06-02', 1);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- 資料表結構 `user`
 --
 
 CREATE TABLE `user` (
@@ -112,7 +118,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `user`
+-- 傾印資料表的資料 `user`
 --
 
 INSERT INTO `user` (`uid`, `username`, `password`, `type`) VALUES
@@ -124,57 +130,57 @@ INSERT INTO `user` (`uid`, `username`, `password`, `type`) VALUES
 (6, '123@ad.com', '123', 'normal');
 
 --
--- Indexes for dumped tables
+-- 已傾印資料表的索引
 --
 
 --
--- Indexes for table `comment`
+-- 資料表索引 `comment`
 --
 ALTER TABLE `comment`
   ADD PRIMARY KEY (`cid`);
 
 --
--- Indexes for table `product`
+-- 資料表索引 `product`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`pid`);
 
 --
--- Indexes for table `sales`
+-- 資料表索引 `sales`
 --
 ALTER TABLE `sales`
   ADD PRIMARY KEY (`cid`);
 
 --
--- Indexes for table `user`
+-- 資料表索引 `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`uid`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- 在傾印的資料表使用自動增長(AUTO_INCREMENT)
 --
 
 --
--- AUTO_INCREMENT for table `comment`
+-- 使用資料表自動增長(AUTO_INCREMENT) `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `product`
+-- 使用資料表自動增長(AUTO_INCREMENT) `product`
 --
 ALTER TABLE `product`
   MODIFY `pid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `sales`
+-- 使用資料表自動增長(AUTO_INCREMENT) `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT for table `user`
+-- 使用資料表自動增長(AUTO_INCREMENT) `user`
 --
 ALTER TABLE `user`
   MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
