@@ -2,7 +2,7 @@ var mysql = require('mysql');
 var conn = mysql.createConnection ({
     host: '127.0.0.1',
     user: 'root',
-    password: '',
+    password: 'root',
     database: 'customer',
     multipleStatements: true
 });
@@ -381,9 +381,9 @@ app.get('/annual-revenue', (req, res, next) => {
         var sql = [];
         sql[0] = "SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC;";
         sql[1] = "SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC;";
-        sql[2] = "SELECT * FROM (SELECT product.pid, product.name, product.price, sales.qty, YEAR(sales.date) AS \"Year\", SUM(product.price * sales.qty) AS \"Total revenue\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY product.pid) AS a WHERE a.`Total revenue` >= ALL(SELECT SUM(product.price * sales.qty) AS \"Total revenue\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY product.pid);";
-        // sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(date) = YEAR(SYSDATE()) GROUP BY sales.pid;";
-        conn.query(sql[0] + sql[1] + sql[2], function (error, results, fields) {
+        sql[2] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY sales.pid ORDER BY `Total revenue` DESC, product.price ASC LIMIT 1) AS b ON a.`Total revenue` = b.`Total revenue`;";
+        sql[3] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY sales.pid ORDER BY `Total profit` DESC, product.price ASC LIMIT 1) AS b ON a.`Total profit` = b.`Total profit`;";
+        conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
             // console.log(results[0]);
             if (error) throw error;
             if (results[0] == "") {

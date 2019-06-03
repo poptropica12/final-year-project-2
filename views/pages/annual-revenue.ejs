@@ -396,11 +396,19 @@
                 </table>
                 <div>
                     <p>From the table above, </p>
-                    <% for (var i = 0; i < results[3].length; i++) { %>
-                        <p>
-                            in the previous week, there are <%= results[3][i]['number'] %> transaction(s) for <%= results[3][i]['name'] %> (<%= results[3][i]['pid'] %>).
-                        </p>
-                    <% } %>
+                    <p>
+                        <% str = "" %>
+                        <% for (var i = 0; i < results[3].length; i++) { %>
+                            <% str += results[3][i]['name'] + ", "%>
+                        <% } %>
+                        <%= str %>
+                        <% if (results[3].length == 1) { %>
+                            has
+                        <% } else { %>
+                            have
+                        <% } %>
+                        the most profit made among all products, keep it up.
+                    </p>
                 </div>
             </div>
             <% } else { %>
