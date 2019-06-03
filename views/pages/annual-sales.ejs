@@ -350,9 +350,7 @@
                         <% } %>
                     </tbody>
                 </table>
-            <% } else { %>
-                <h1>Oops! No results available now.</h1>
-            <% } %>
+
             <div>
                 <h3>Analysis</h3>
                 <p>
@@ -360,9 +358,36 @@
                     <% for (var i = 0; i < results[1].length; i++) { %>
                         <% str += results[1][i]['name'] + ", "%>
                     <% } %>
-                    <%= str %> has/have the best sales among all products, keep it up.
+                    <%= str %>
+                    <% if (results[1].length == 1) { %>
+                        has
+                    <% } else { %>
+                        have
+                    <% } %>
+                    the best sales among all products, keep it up.
                 </p>
+                <table class="table table-hover">
+                    <thead>
+                        <th scope="col">PID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Sales Year</th>
+                        <th scope="col">Total sales</th>
+                    </thead>
+                    <tbody>
+                        <% for (var i = 0; i < results[2].length; i++) { %>
+                            <tr class="table-info">
+                                <td scope="row"><%= results[2][i]['pid'] %></td>
+                                <td><%= results[2][i]['name'] %></td>
+                                <td><%= results[2][i]['Year'] %></td>
+                                <td><%= results[2][i]['qty'] %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
             </div>
+            <% } else { %>
+                <h1>Oops! No results available now.</h1>
+            <% } %>
         </div>
         <!-- /.container-fluid -->
 

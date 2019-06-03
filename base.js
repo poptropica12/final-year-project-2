@@ -314,9 +314,11 @@ app.get('/annual-sales', (req, res, next) => {
     if(req.cookies['uid']) {
         var sql = [];
         sql[0] = "SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid, YEAR(date);";
-        sql[1] = "SELECT * FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS total FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY sales.pid) AS a INNER JOIN (SELECT MAX(Total_sales) AS Maximum FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total_sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY pid, YEAR(date)) AS temp) AS b ON a.total = b.Maximum";
-        conn.query(sql[0] + sql[1], function (error, results, fields) {
-            console.log(results[0]);
+        sql[1] = "SELECT * FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS total FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY sales.pid) AS a INNER JOIN (SELECT MAX(Total_sales) AS Maximum FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total_sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY pid, YEAR(date)) AS temp) AS b ON a.total = b.Maximum;";
+        sql[2] = "SELECT YEAR(date) AS \"Year\", sales.pid, sales.qty, product.name FROM `sales` INNER JOIN product ON sales.pid = product.pid WHERE YEAR(date) = YEAR(SYSDATE());";
+        sql[3] = "SELECT COUNT(*) AS number FROM sales WHERE YEAR(date) = YEAR(SYSDATE()) GROUP BY pid ;";
+        conn.query(sql[0] + sql[1] + sql[2], function (error, results, fields) {
+            // console.log(results[0]);
             if (error) throw error;
             if (results[0] == "") {
                 results[0] = {"Total sales": 0};
