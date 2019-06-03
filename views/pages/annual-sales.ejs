@@ -63,9 +63,9 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Report Type:</h6>
-            <a class="collapse-item" href="buttons.html">Annual</a>
-            <a class="collapse-item" href="buttons.html">Monthly</a>
-            <a class="collapse-item" href="cards.html">Weekly</a>
+            <a class="collapse-item" href="/annual-sales">Annual</a>
+            <a class="collapse-item" href="/monthly-sales">Monthly</a>
+            <a class="collapse-item" href="weekly-sales">Weekly</a>
           </div>
         </div>
       </li>
@@ -79,9 +79,9 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Report Type:</h6>
-            <a class="collapse-item" href="utilities-border.html">Annual</a>
-            <a class="collapse-item" href="utilities-animation.html">Monthly</a>
-            <a class="collapse-item" href="utilities-other.html">Weekly</a>
+            <a class="collapse-item" href="/annual-revenue">Annual</a>
+            <a class="collapse-item" href="/monthly-revenue">Monthly</a>
+            <a class="collapse-item" href="/weekly-revenue">Weekly</a>
           </div>
         </div>
       </li>
@@ -384,6 +384,14 @@
                         <% } %>
                     </tbody>
                 </table>
+                <div>
+                    <p>From the table above, </p>
+                    <% for (var i = 0; i < results[3].length; i++) { %>
+                        <p>
+                        in <%= results[0][0]['Year'] %>, there are <%= results[3][i]['number'] %> transaction(s) for <%= results[3][i]['name'] %> (<%= results[3][i]['pid'] %>).
+                        </p>
+                    <% } %>
+                </div>
             </div>
             <% } else { %>
                 <h1>Oops! No results available now.</h1>
