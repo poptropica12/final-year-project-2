@@ -331,7 +331,7 @@
         <!-- Begin Page Content -->
         <div class="container-fluid">
             <% if (results[0][0]['Total sales'] > 0) { %>
-                <h1 class="display-5">All <%= results[0][0]['date'] %> weekly sales results are shown below: </h1>
+                <h1 class="display-5">All <%= results[0][0]['Date'] %> weekly sales results are shown below: </h1>
                 <table class="table table-hover">
                     <thead>
                         <th scope="col">PID</th>
@@ -344,7 +344,7 @@
                             <tr class="table-info">
                                 <td scope="row"><%= results[0][i]['pid'] %></td>
                                 <td><%= results[0][i]['name'] %></td>
-                                <td><%= results[0][i]['date'] %></td>
+                                <td><%= results[0][i]['Date'] %></td>
                                 <td><%= results[0][i]['Total sales'] %></td>
                             </tr>
                         <% } %>
@@ -378,7 +378,7 @@
                             <tr class="table-info">
                                 <td scope="row"><%= results[2][i]['pid'] %></td>
                                 <td><%= results[2][i]['name'] %></td>
-                                <td><%= results[2][i]['date'] %></td>
+                                <td><%= results[2][i]['Date'] %></td>
                                 <td><%= results[2][i]['qty'] %></td>
                             </tr>
                         <% } %>
