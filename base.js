@@ -320,8 +320,8 @@ app.get('/annual-sales', (req, res, next) => {
         conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
             // console.log(results[0]);
             if (error) throw error;
-            if (results[0] == "") {
-                results[0] = {"Total sales": 0};
+            if (results[0][0] == "") {
+                results[0][0] = {"Total sales": 0};
             }
 
             res.render('pages/annual-sales', {uid: req.cookies["uid"], results: results});
@@ -342,8 +342,8 @@ app.get('/monthly-sales', (req, res, next) => {
         conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
             // console.log(results[0]);
             if (error) throw error;
-            if (results[0] == "") {
-                results[0] = {"Total sales": 0};
+            if (results[0][0] == "") {
+                results[0][0] = {"Total sales": 0};
             }
 
             res.render('pages/monthly-sales', {uid: req.cookies["uid"], results: results});
@@ -364,8 +364,8 @@ app.get('/weekly-sales', (req, res, next) => {
         conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
             // console.log(results[0][0]['Date']);
             if (error) throw error;
-            if (results[0] == "") {
-                results[0] = {"Total sales": 0};
+            if (results[0][0] == "") {
+                results[0][0] = {"Total sales": 0};
             }
 
             res.render('pages/weekly-sales', {uid: req.cookies["uid"], results: results});
@@ -386,8 +386,8 @@ app.get('/annual-revenue', (req, res, next) => {
         conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
             // console.log(results[0]);
             if (error) throw error;
-            if (results[0] == "") {
-                results[0] = {"Total sales": 0};
+            if (results[0][0] == "") {
+                results[0][0] = {"Total sales": 0};
             }
 
             res.render('pages/annual-revenue', {uid: req.cookies["uid"], results: results});
@@ -409,8 +409,8 @@ app.get('/monthly-revenue', (req, res, next) => {
         conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
             // console.log(results[0]);
             if (error) throw error;
-            if (results[0] == "") {
-                results[0] = {"Total sales": 0};
+            if (results[0][0] == "") {
+                results[0][0] = {"Total sales": 0};
             }
 
             res.render('pages/monthly-revenue', {uid: req.cookies["uid"], results: results});
@@ -432,8 +432,8 @@ app.get('/weekly-revenue', (req, res, next) => {
         conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
             // console.log(results[0]);
             if (error) throw error;
-            if (results[0] == "") {
-                results[0] = {"Total sales": 0};
+            if (results[0][0] == "") {
+                results[0][0] = {"Total sales": 0};
             }
 
             res.render('pages/weekly-revenue', {uid: req.cookies["uid"], results: results});
@@ -448,16 +448,43 @@ app.get('/weekly-revenue', (req, res, next) => {
 app.get('/operating-profit-margin', (req, res, next) => {
     if (req.cookies['uid']) {
         var sql = [];
-        sql[0] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(sales.date) ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC;"
-        sql[1] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(SYSDATE()) ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC;";
+        sql[0] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(sales.date) ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC LIMIT 1;"
+        sql[1] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(SYSDATE()) ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC LIMIT 1;";
         conn.query(sql[0] + sql[1], function(error, results, fields) {
+            // console.log(results[0][0]['Total sales']);
+            // console.log(results[1][0]["Total sales"]);
             if (error) throw error;
-            if (results[0] = "") {
-                console.log("No profit.")
-                results[0] = {}
-            }
+            if (results[0][0] == "") {
+                console.log("No profit.");
+                results[0][0] = {"Total sales": 0};
+            };
+            // console.log("results[0][0]['Total sales'] =", results[0][0]['Total sales']);
+            // console.log("results[1][0]['Total sales'] = ", results[1][0]["Total sales"]);
             res.render('pages/operating-profit-margin', {uid: req.cookies["uid"], results: results});
-        })
+        });
+    }
+    else {
+        res.redirect('/login?login=' + false);
+    };
+});
+
+app.get('/gross-profit-margin', (req, res, next) => {
+    if (req.cookies['uid']) {
+        var sql = [];
+        sql[0] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(sales.date) ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC LIMIT 1;"
+        sql[1] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(SYSDATE()) ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC LIMIT 1;";
+        conn.query(sql[0] + sql[1], function(error, results, fields) {
+            // console.log(results[0][0]['Total sales']);
+            // console.log(results[1][0]["Total sales"]);
+            if (error) throw error;
+            if (results[0][0] == "") {
+                console.log("No profit.");
+                results[0][0] = {"Total sales": 0};
+            };
+            // console.log("results[0][0]['Total sales'] =", results[0][0]['Total sales']);
+            // console.log("results[1][0]['Total sales'] = ", results[1][0]["Total sales"]);
+            res.render('pages/gross-profit-margin', {uid: req.cookies["uid"], results: results});
+        });
     }
     else {
         res.redirect('/login?login=' + false);

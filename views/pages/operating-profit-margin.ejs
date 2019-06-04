@@ -124,8 +124,8 @@
           <div id="collapse-page" class="collapse" aria-labelledby="heading-Pages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
               <h6 class="collapse-header">Profitability Ratios: </h6>
-              <a class="collapse-item" href="#">Operating profit margin</a>
-              <a class="collapse-item" href="#">Gross profit margin</a>
+              <a class="collapse-item" href="/operating-profit-margin">Operating profit margin</a>
+              <a class="collapse-item" href="/gross-profit-margin">Gross profit margin</a>
               <!-- <div class="collapse-divider"></div>
               <h6 class="collapse-header">Other Pages:</h6>
               <a class="collapse-item" href="404.html">404 Page</a>
@@ -342,7 +342,7 @@
                   Activity Log
                 </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                <a class="dropdown-item" href="/logout" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Logout
                 </a>
@@ -357,7 +357,7 @@
         <!-- Begin Page Content -->
         <div class="container-fluid">
             <% if (results[0][0]['Total sales'] > 0) { %>
-                <h1 class="display-5">The <%= results[0][0]['date'] %> total annual revenue is shown below: </h1>
+                <h1 class="display-5">The total annual sales revenue in this year is shown below: </h1>
                 <table class="table table-hover">
                     <thead>
                         <th scope="col">Year</th>
@@ -367,73 +367,57 @@
                     <tbody>
                         <% for (var i = 0; i < results[0].length; i++) { %>
                             <tr class="table-info">
-                                <td scope="row"><%= results[0][i]['pid'] %></td>
                                 <td><%= results[0][i]['Year'] %></td>
-                                <td>$<%= results[0][i]['Total sales'] %></td>
-                                <td><%= results[0][i]['Total revenue'] %></td>
+                                <td><%= results[0][i]['Total sales'] %></td>
+                                <td>$<%= results[0][i]['Total revenue'].toFixed(2) %></td>
                             </tr>
                         <% } %>
-                    </tbody>
+                        <% var revenue = results[0][results[0].length - 1]['Total revenue'].toFixed(2); %>
+                        <% var sales = results[0][results[0].length - 1]['Total sales']; %>
+                        <% var avg = revenue / sales; %>
                 </table>
                 <p>
-                    <% var str = "" %>
-                    <% for (var i = 0; i < results[2].length; i++) { %>
-                        <% str += results[2][i]['name'] + ", "%>
-                    <% } %>
-                    <%= str %>
-                    <% if (results[2].length == 1) { %>
-                        has
+                    In the sales revenue of $<%= revenue %> in <%= results[0][0]["Year"] %>, <%= sales %> of product
+                    <% if (sales == 1) { %>
+                        sale has
                     <% } else { %>
-                        have
+                        sales have
                     <% } %>
-                    the most revenue made among all products, keep it up.
+                    been made, which means each product contributes $<%= avg %> dollars value in average.
                 </p>
             <div>
                 <h3>Profit Analysis</h3>
 
                 <table class="table table-hover">
                     <thead>
-                        <th scope="col">PID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Unit price</th>
-                        <th scope="col">Unit cost</th>
+                        <th scope="col">Year</th>
                         <th scope="col">Total sales</th>
                         <th scope="col">Total profit</th>
-                        <th scope="col">Sales year</th>
                     </thead>
                     <tbody>
                         <% for (var i = 0; i < results[1].length; i++) { %>
                             <tr class="table-info">
-                                <td scope="row"><%= results[1][i]['pid'] %></td>
-                                <td><%= results[1][i]['name'] %></td>
-                                <td>$<%= results[1][i]['price'].toFixed(2) %></td>
-                                <td>$<%= results[1][i]['cost'].toFixed(2) %></td>
+                                <td scope="row"><%= results[1][i]['Year'] %></td>
                                 <td><%= results[1][i]['Total sales'] %></td>
                                 <td>$<%= results[1][i]['Total profit'].toFixed(2) %></td>
-                                <td><%= results[1][i]['Year'] %></td>
                             </tr>
                         <% } %>
+                        <% var profit = results[1][results[1].length - 1]['Total profit'].toFixed(2); %>
                     </tbody>
                 </table>
                 <div>
-                    <p>From the table above, </p>
+                    <p>From the table above, it could be seen that there is a total profit of $<%= profit %> in <%= results[1][0]['Year'] %>.
+                    </p>
+                </div>
+                <% var opm = (sales / revenue * 100).toFixed(2); %>
+                <div>
                     <p>
-                        <% str = "" %>
-                        <% for (var i = 0; i < results[3].length; i++) { %>
-                            <% str += results[3][i]['name'] + ", "%>
-                        <% } %>
-                        <%= str %>
-                        <% if (results[3].length == 1) { %>
-                            has
-                        <% } else { %>
-                            have
-                        <% } %>
-                        the most profit made among all products, keep it up.
+                        As a result, the operating profit margin would be <%= opm %>%.
                     </p>
                 </div>
             </div>
             <% } else { %>
-                <h1>Oops! No results available now.</h1>
+                <h1>Oops! No results available now. <%= results[0]['Total sales'] %></h1>
             <% } %>
         </div>
         <!-- /.container-fluid -->
@@ -475,7 +459,7 @@
         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <a class="btn btn-primary" href="/logout">Logout</a>
         </div>
       </div>
     </div>
