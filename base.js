@@ -490,6 +490,37 @@ app.get('/gross-profit-margin', (req, res, next) => {
         res.redirect('/login?login=' + false);
     };
 });
+
+app.get("/cost", (req, res, next) => {
+    if (req.cookies['uid']) {
+        var sql = [];
+        sql[0] = "SELECT `product`.`pid`, `product`.`name`, `product`.`cost` FROM `product` ORDER BY product.cost DESC, product.pid ASC;";
+        sql[1] = "SELECT product.pid, product.name, MIN(`product`.`cost`) AS \"Minimum unit\", MIN(`product`.`cost`) * 1000 AS \"Minimum\" FROM `product` LIMIT 1;";
+        sql[2] = "SELECT product.pid, product.name, MAX(`product`.`cost`) AS \"Maximum unit\", MAX(`product`.`cost`) * 1000 AS \"Maximum\" FROM `product` LIMIT 1;";
+        sql[3] = "SELECT SUM(cost) AS \"Total unit cost\", SUM(cost) * 1000 AS \"Total cost\" FROM product;";
+        conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
+            if (error) throw error;
+            console.log(results[1][0]['Minimum']);
+            console.log(results[2][0]['Maximum']);
+            console.log(results[0]);
+            if (results[0] == "") {
+                results[0][0] = {"pid": 1, "cost": 0};
+                results[1][0] = {"pid": 1, "Minimum": 0, "Minimum unit": 0};
+                results[2][0] = {"pid": 1, "Maximum": 0, "Maximum unit": 0};
+                rseults[3][0] = {"Total unit cost": 0, "Total cost": 0};
+                console.log("No product costs available.");
+            }
+            else {
+
+                console.log("All good.");
+            };
+            res.render("pages/cost", {uid: req.cookies["uid"], results: results});
+        });
+    }
+    else {
+        res.redirect("/login?ogin=" + false);
+    };
+});
 // app.get('/test', (req, res, next) => {
 //     if (req.cookies['uid']) {
 //         conn.query("SELECT * FROM sales ORDER BY date DESC", function (error, results, fields) {

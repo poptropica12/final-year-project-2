@@ -356,89 +356,91 @@
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
-            <% if (results[0][0]['Total sales'] > 0) { %>
-                <h1 class="display-5">All <%= results[0][0]['date'] %> annual revenue results are shown below: </h1>
+            <% if (!((results[1][0]['Minimum'] == results[2][0]['Maximum']) && (results[1][0]['Minimum'] == 0 || results[2][0]['Maximum'] == 0))) { %>
+                <h1 class="display-5">All raw materials unit costs in this year are shown below: </h1>
                 <table class="table table-hover">
                     <thead>
                         <th scope="col">PID</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Unit price</th>
-                        <th scope="col">Total sales</th>
-                        <th scope="col">Total revenue</th>
-                        <th scope="col">Sales year</th>
+                        <th scope="col">Unit cost</th>
                     </thead>
                     <tbody>
                         <% for (var i = 0; i < results[0].length; i++) { %>
                             <tr class="table-info">
-                                <td scope="row"><%= results[0][i]['pid'] %></td>
+                                <td><%= results[0][i]['pid'] %></td>
                                 <td><%= results[0][i]['name'] %></td>
-                                <td>$<%= results[0][i]['price'].toFixed(2) %></td>
-                                <td><%= results[0][i]['Total sales'] %></td>
-                                <td>$<%= results[0][i]['Total revenue'].toFixed(2) %></td>
-                                <td><%= results[0][i]['Year'] %></td>
+                                <td>$<%= results[0][i]['cost'].toFixed(2) %></td>
                             </tr>
                         <% } %>
-                    </tbody>
                 </table>
+                <h3>Minimum unit cost</h3>
                 <p>
-                    <% var str = "" %>
-                    <% for (var i = 0; i < results[2].length; i++) { %>
-                        <% str += results[2][i]['name'] + ", "%>
-                    <% } %>
-                    <%= str %>
-                    <% if (results[2].length == 1) { %>
-                        has
-                    <% } else { %>
-                        have
-                    <% } %>
-                    the most revenue made among all products, keep it up.
+                    Assume that all products are bought in the quantity of 1000 each year, the cheapest unit cost would be <%= results[1][0]["name"] %> (<%= results[1][0]['pid'] %>).
                 </p>
-            <div>
-                <h3>Profit Analysis</h3>
-
                 <table class="table table-hover">
                     <thead>
                         <th scope="col">PID</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Unit price</th>
-                        <th scope="col">Unit cost</th>
-                        <th scope="col">Total sales</th>
-                        <th scope="col">Total profit</th>
-                        <th scope="col">Sales year</th>
+                        <th scope="col">Minimum unit cost</th>
+                        <th scope="col">Minimum cost</th>
                     </thead>
                     <tbody>
                         <% for (var i = 0; i < results[1].length; i++) { %>
                             <tr class="table-info">
-                                <td scope="row"><%= results[1][i]['pid'] %></td>
+                                <td><%= results[1][i]['pid'] %></td>
                                 <td><%= results[1][i]['name'] %></td>
-                                <td>$<%= results[1][i]['price'].toFixed(2) %></td>
-                                <td>$<%= results[1][i]['cost'].toFixed(2) %></td>
-                                <td><%= results[1][i]['Total sales'] %></td>
-                                <td>$<%= results[1][i]['Total profit'].toFixed(2) %></td>
-                                <td><%= results[1][i]['Year'] %></td>
+                                <td>$<%= results[1][i]['Minimum unit'].toFixed(2) %></td>
+                                <td>$<%= results[1][i]['Minimum'].toFixed(2) %></td>
                             </tr>
                         <% } %>
+                </table>
+                <h3>Maximum unit cost</h3>
+                <p>
+                    Assume that all products are bought in the quantity of 1000 each year, the cheapest unit cost would be <%= results[2][0]["name"] %> (<%= results[2][0]['pid'] %>).
+                </p>
+                <table class="table table-hover">
+                    <thead>
+                        <th scope="col">PID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Maximum unit cost</th>
+                        <th scope="col">Maximum cost</th>
+                    </thead>
+                    <tbody>
+                        <% for (var i = 0; i < results[2].length; i++) { %>
+                            <tr class="table-info">
+                                <td><%= results[2][i]['pid'] %></td>
+                                <td><%= results[2][i]['name'] %></td>
+                                <td>$<%= results[2][i]['Maximum unit'].toFixed(2) %></td>
+                                <td>$<%= results[2][i]['Maximum'].toFixed(2) %></td>
+                            </tr>
+                        <% } %>
+                </table>
+            <div>
+                <h3>Cost Analysis</h3>
+                <p>
+                    When the maximum cost is used to bought the maximum quantity of product with the minimum unit cost:
+                </p>
+                <table class="table table-hover">
+                    <thead>
+                        <th scope="col">Minimum unit cost</th>
+                        <th scope="col">Maximum cost</th>
+                        <th scope="col">Quantity</th>
+                    </thead>
+                    <tbody>
+                            <tr class="table-info">
+                                <td scope="row"><%= results[1][0]['Minimum unit'] %></td>
+                                <td><%= results[2][0]['Maximum'] %></td>
+                                <td><%= Math.floor(1000 + results[2][0]['Maximum'] / results[1][0]['Minimum unit']) %></td>
+                            </tr>
                     </tbody>
                 </table>
                 <div>
-                    <p>From the table above, </p>
-                    <p>
-                        <% str = "" %>
-                        <% for (var i = 0; i < results[3].length; i++) { %>
-                            <% str += results[3][i]['name'] + ", "%>
-                        <% } %>
-                        <%= str %>
-                        <% if (results[3].length == 1) { %>
-                            has
-                        <% } else { %>
-                            have
-                        <% } %>
-                        the most profit made among all products, keep it up.
+                    <p>From the table above, it could be seen that there is a <%= (results[2][0]['Maximum'] / results[1][0]['Minimum unit'] / 1000 * 100).toFixed(2) %>% increase in product quantity.
                     </p>
                 </div>
             </div>
             <% } else { %>
-                <h1>Oops! No results available now.</h1>
+                <h1>Oops! No product cost data available now.</h1>
             <% } %>
         </div>
         <!-- /.container-fluid -->
