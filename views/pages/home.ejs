@@ -30,14 +30,18 @@
 <body>
     <%- include('../partial/navigation', {title: "home"}) %>
     <!--  if (logged)  -->
-    <div class="jumbotron">
+        <div class="jumbotron">
+                <div class="alert alert-dismissible alert-danger" id="denied" style="display:none;">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Oh snap!</strong> You don't seem to have the permission to access the dashboard. Please login with an admin account and try again.
+                </div>
         <h1 class="display-3">Welcome to SCOPE Fruit Store!</h1>
       <h2 class="display-5">We sell fruits and manage customer data.</h1>
       <p class="lead">We provide valuable customer services as much as you desire, in a detailed, productive way.</p>
       <hr class="my-4">
       <p>Scope is a customer relationship management (CRM) system that collects raw data from customers and transform them into useful information for future business decisions.</p>
       <p class="lead">
-        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+        <a class="btn btn-primary btn-lg" href="/about" role="button">Learn more</a>
       </p>
       <!-- <h1>This is a Heading</h1>
       <p>This is a paragraph.</p>
@@ -54,12 +58,11 @@
                           <img class="card-img-top" src="public/products/orange-2850848_1280.png" alt="Card image cap">
                           <div class="card-body card text-white bg-primary">
                             <p class="card-text">orange</p>
-                            <div class="d-flex justify-content-between align-items-center card text-white">
+                            <div class="d-flex justify-content-between align-items-center card text-white bg-info">
                               <div>
                                   <a href="/product/1">
                                       <button type="button" class="btn btn-sm btn-info">View</button>
                                   </a>
-                                <button type="button" class="btn btn-sm btn-info">Edit</button>
                               </div>
                               <small class="text-muted"></small>
                             </div>
@@ -72,12 +75,11 @@
                           <img class="card-img-top" src="public/products/banana-bananas-colorful-2014461.jpg" alt="Card image cap">
                           <div class="card-body card text-white bg-primary">
                             <p class="card-text">banana</p>
-                            <div class="d-flex justify-content-between align-items-center card text-white">
+                            <div class="d-flex justify-content-between align-items-center card text-white bg-info">
                               <div>
                                   <a href="/product/2">
                                       <button type="button" class="btn btn-sm btn-info">View</button>
                                   </a>
-                                <button type="button" class="btn btn-sm btn-info">Edit</button>
                               </div>
                               <small class="text-muted"></small>
                             </div>
@@ -90,12 +92,11 @@
                           <img class="card-img-top" src="public/products/apple-food-fresh-38068.jpg" alt="Card image cap">
                           <div class="card-body card text-white bg-primary">
                             <p class="card-text">apple</p>
-                            <div class="d-flex justify-content-between align-items-center card text-white">
+                            <div class="d-flex justify-content-between align-items-center card text-white bg-info">
                               <div>
                                   <a href="/product/3">
                                       <button type="button" class="btn btn-sm btn-info">View</button>
                                   </a>
-                                <button type="button" class="btn btn-sm btn-info">Edit</button>
                               </div>
                               <small class="text-muted"></small>
                             </div>
@@ -108,12 +109,11 @@
                           <img class="card-img-top" src="public/products/grape-3882144_1280.jpg" alt="Card image cap">
                           <div class="card-body card text-white bg-primary">
                             <p class="card-text">grapes</p>
-                            <div class="d-flex justify-content-between align-items-center card text-white">
+                            <div class="d-flex justify-content-between align-items-center card text-white bg-info">
                               <div>
                                   <a href="/product/4">
                                       <button type="button" class="btn btn-sm btn-info">View</button>
                                   </a>
-                                <button type="button" class="btn btn-sm btn-info">Edit</button>
                               </div>
                               <small class="text-muted"></small>
                             </div>
@@ -253,6 +253,14 @@
 </body>
 
 <script>
+    var url = new URL(window.location.href);
+    var permission = url.searchParams.get("permission");
+    if (permission == "false") {
+        $("#denied").css("display", "block");
+    }
+    else {
+        $("#denied").css("display", "none");
+    };
     // $(document).ready(function(){
     //     $("p").click(function(){
     //         $(this).hide();

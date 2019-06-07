@@ -48,23 +48,25 @@ body {
             var status = url.searchParams.get("status");
             var wrongUsernamePassword = url.searchParams.get("wrongUsernamePassword");
             var login = url.searchParams.get("login");
-            console.log("status = " + status);
-            console.log("wrongUsernamePassword = " + wrongUsernamePassword);
+            var usernameNull = url.searchParams.get("usernameNull");
+            var passwordNull = url.searchParams.get("passwordNull");
+            // console.log("status = " + status);
+            // console.log("wrongUsernamePassword = " + wrongUsernamePassword);
 
             if (url.searchParams.get("status") && status != "null") {
                 $('#success-message').css("display", "block");
-                console.log(typeof(status));
+                // console.log(typeof(status));
             }
             else {
                 $('#success-message').css("display", "none");
             };
-            if (url.searchParams.get("wrongUsernamePassword") && wrongUsernamePassword != "null") {
+            if ((wrongUsernamePassword && wrongUsernamePassword != "null") || usernameNull == "true" || passwordNull == "true") {
                 $("#error-message").css("display", "block");
             }
             else {
                 $("#error-message").css("display", "none");
             };
-            if(login == false) {
+            if(login == "false") {
             $("#login-required").css("display", "block")
             }
             else {

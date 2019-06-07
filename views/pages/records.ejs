@@ -44,104 +44,118 @@
     <body>
         <%- include('../partial/navigation', {title: "records"}) %>
         <div class="jumbotron">
-            <% if (records[1][0]['total'] > 0) { %>
-                <h1 class="display-5">All sales records are shown below: </h1>
-                <table class="table table-hover">
-                    <thead>
-                        <th scope="col">PID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Sales date</th>
-                        <th scope="col">UID</th>
-                    </thead>
-                    <tbody>
-                        <% for (var i = 0; i < records[1].length; i++) { %>
-                            <tr class="table-info">
-                                <td scope="row"><%= records[1][i]['pid'] %></td>
-                                <td><%= records[1][i]['name'] %></td>
-                                <td><%= records[1][i]['date'] %></td>
-                                <td><%= records[1][i]['uid'] %></td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
+            <% if (type == "admin") { %>
+                <% if (records[1][0]['total'] > 0) { %>
+                    <h1 class="display-5">All sales records are shown below: </h1>
+                    <table class="table table-hover">
+                        <thead>
+                            <th scope="col">PID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Sales date</th>
+                            <th scope="col">UID</th>
+                            <th scope="col">Quantity</th>
+                        </thead>
+                        <tbody>
+                            <% for (var i = 0; i < records[1].length; i++) { %>
+                                <tr class="table-info">
+                                    <td scope="row"><%= records[1][i]['pid'] %></td>
+                                    <td><%= records[1][i]['name'] %></td>
+                                    <td><%= records[1][i]['date'] %></td>
+                                    <td><%= records[1][i]['uid'] %></td>
+                                    <td><%= records[1][i]['qty'] %></td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <h1>No records available.</h1>
+                <% } %>
             <% } else { %>
-                <h1>No records available.</h1>
+                <h1>You do not have access to sales records.</h1>
             <% } %>
-            <form action="/new-record/<%= records[0][0]['pid'] %>" method="POST" form_signature="15652032749810445774">
-                <fieldset>
-                    <legend>Add a new record for this product</legend>
-                    <label for="readOnlyUID">UID</label>
-                        <input class="form-control" id="readOnlyUID" type="text" placeholder="Readonly UID here..." readonly="" field_signature="771735811" title="overall type: UNKNOWN_TYPE
-                        server type: NO_SERVER_DATA
-                        heuristic type: UNKNOWN_TYPE
-                        label: Readonly input
-                        parseable name: readOnlyUID
-                        section: disabledInput_1-default
-                        field signature: 771735811
-                        form signature: 14325195704411944896" autofill-information="overall type: UNKNOWN_TYPE
-                        server type: NO_SERVER_DATA
-                        heuristic type: UNKNOWN_TYPE
-                        label: Readonly input
-                        parseable name: readOnlyUID
-                        section: disabledInput_1-default
-                        field signature: 771735811
-                        form signature: 14325195704411944896" autofill-prediction="UNKNOWN_TYPE">
-                        <label for="readOnlyPID">Product name</label>
-                            <input class="form-control" id="readOnlyProductName" type="text" placeholder="<%= records[0][0]['name'] %>" readonly="" field_signature="771735811" title="overall type: UNKNOWN_TYPE
+            <% if (type == "normal") { %>
+                <form action="/new-record/<%= records[0][0]['pid'] %>" method="POST" form_signature="15652032749810445774">
+                    <fieldset>
+                        <legend>Add a new record for this product</legend>
+                        <label for="readOnlyUID">UID</label>
+                            <input class="form-control" id="readOnlyUID" type="text" placeholder="Readonly UID here..." readonly="" field_signature="771735811" title="overall type: UNKNOWN_TYPE
                             server type: NO_SERVER_DATA
                             heuristic type: UNKNOWN_TYPE
                             label: Readonly input
-                            parseable name: readOnlyProductName
+                            parseable name: readOnlyUID
                             section: disabledInput_1-default
                             field signature: 771735811
                             form signature: 14325195704411944896" autofill-information="overall type: UNKNOWN_TYPE
                             server type: NO_SERVER_DATA
                             heuristic type: UNKNOWN_TYPE
                             label: Readonly input
-                            parseable name: readOnlyProductName
+                            parseable name: readOnlyUID
                             section: disabledInput_1-default
                             field signature: 771735811
                             form signature: 14325195704411944896" autofill-prediction="UNKNOWN_TYPE">
-                            <label class="col-form-label" for="qty">Number of purchase</label>
-                            <input required name="qty" value="1" type="number" min="1" step="1" class="form-control" placeholder="Quantity" id="qty" field_signature="2162400822" title="overall type: UNKNOWN_TYPE
-                            server type: NO_SERVER_DATA
-                            heuristic type: UNKNOWN_TYPE
-                            label: Default input
-                            parseable name: qty
-                            section: disabledInput_1-default
-                            field signature: 2162400822
-                            form signature: 14325195704411944896" autofill-information="overall type: UNKNOWN_TYPE
-                            server type: NO_SERVER_DATA
-                            heuristic type: UNKNOWN_TYPE
-                            label: Default input
-                            parseable name: qty
-                            section: disabledInput_1-default
-                            field signature: 2162400822
-                            form signature: 14325195704411944896" autofill-prediction="UNKNOWN_TYPE">
-                            <label class="col-form-label" for="qty">Date of purchase</label>
-                            <input name="date" required name="date" type="date" class="form-control" placeholder="Quantity" id="date" field_signature="2162400822" title="overall type: UNKNOWN_TYPE
-                            server type: NO_SERVER_DATA
-                            heuristic type: UNKNOWN_TYPE
-                            label: Default input
-                            parseable name: date
-                            section: disabledInput_1-default
-                            field signature: 2162400822
-                            form signature: 14325195704411944896" autofill-information="overall type: UNKNOWN_TYPE
-                            server type: NO_SERVER_DATA
-                            heuristic type: UNKNOWN_TYPE
-                            label: Default input
-                            parseable name: date
-                            section: disabledInput_1-default
-                            field signature: 2162400822
-                            form signature: 14325195704411944896" autofill-prediction="UNKNOWN_TYPE">
-                </fieldset>
+                            <label for="readOnlyPID">Product name</label>
+                                <input class="form-control" id="readOnlyProductName" type="text" placeholder="<%= records[0][0]['name'] %>" readonly="" field_signature="771735811" title="overall type: UNKNOWN_TYPE
+                                server type: NO_SERVER_DATA
+                                heuristic type: UNKNOWN_TYPE
+                                label: Readonly input
+                                parseable name: readOnlyProductName
+                                section: disabledInput_1-default
+                                field signature: 771735811
+                                form signature: 14325195704411944896" autofill-information="overall type: UNKNOWN_TYPE
+                                server type: NO_SERVER_DATA
+                                heuristic type: UNKNOWN_TYPE
+                                label: Readonly input
+                                parseable name: readOnlyProductName
+                                section: disabledInput_1-default
+                                field signature: 771735811
+                                form signature: 14325195704411944896" autofill-prediction="UNKNOWN_TYPE">
+                                <label class="col-form-label" for="qty">Number of purchase</label>
+                                <input required name="qty" value="1" type="number" min="1" step="1" class="form-control" placeholder="Quantity" id="qty" field_signature="2162400822" title="overall type: UNKNOWN_TYPE
+                                server type: NO_SERVER_DATA
+                                heuristic type: UNKNOWN_TYPE
+                                label: Default input
+                                parseable name: qty
+                                section: disabledInput_1-default
+                                field signature: 2162400822
+                                form signature: 14325195704411944896" autofill-information="overall type: UNKNOWN_TYPE
+                                server type: NO_SERVER_DATA
+                                heuristic type: UNKNOWN_TYPE
+                                label: Default input
+                                parseable name: qty
+                                section: disabledInput_1-default
+                                field signature: 2162400822
+                                form signature: 14325195704411944896" autofill-prediction="UNKNOWN_TYPE">
+                                <label class="col-form-label" for="qty">Date of purchase</label>
+                                <input name="date" required name="date" type="date" class="form-control" placeholder="Quantity" id="date" field_signature="2162400822" title="overall type: UNKNOWN_TYPE
+                                server type: NO_SERVER_DATA
+                                heuristic type: UNKNOWN_TYPE
+                                label: Default input
+                                parseable name: date
+                                section: disabledInput_1-default
+                                field signature: 2162400822
+                                form signature: 14325195704411944896" autofill-information="overall type: UNKNOWN_TYPE
+                                server type: NO_SERVER_DATA
+                                heuristic type: UNKNOWN_TYPE
+                                label: Default input
+                                parseable name: date
+                                section: disabledInput_1-default
+                                field signature: 2162400822
+                                form signature: 14325195704411944896" autofill-prediction="UNKNOWN_TYPE">
+                    </fieldset>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Submit record</button>
+                        <a href="/product/<%= records[0][0]['pid'] %>">
+                            <button type="button" class="btn btn-info">Back to product view</button>
+                        </a>
+                    </div>
+                </form>
+            <% } else { %>
                 <div>
-                    <button type="submit" class="btn btn-primary">Submit record</button>
                     <a href="/product/<%= records[0][0]['pid'] %>">
                         <button type="button" class="btn btn-info">Back to product view</button>
                     </a>
                 </div>
-            </form>
+            <% } %>
         </div>
         <% include ../partial/footer %>
     </body>

@@ -82,8 +82,8 @@
           <h1 class="jumbotron-heading">Product sales</h1>
           <p class="lead text-muted">All products are frsehly arrived from all around the world. Cheap, juicy and quality fruits on your service.</p>
           <p>
-            <a href="#" class="btn btn-primary my-2">Like us on Facebook</a>
-            <a href="#" class="btn btn-secondary my-2">Follow us on Twitter</a>
+            <a href="https://www.facebook.com/" class="btn btn-primary my-2">Like us on Facebook</a>
+            <a href="https://www.twitter.com/" class="btn btn-secondary my-2">Follow us on Twitter</a>
           </p>
         </div>
       </section>
@@ -98,14 +98,18 @@
                 <img class="card-img-top" src="public/products/<%= results[i]['image'] %>" alt="Card image cap">
                 <div class="card-body card text-white bg-primary">
                   <p class="card-text"><%= results[i]['name'] %></p>
-                  <div class="d-flex justify-content-between align-items-center card text-white">
+                  <div class="d-flex justify-content-between align-items-center card text-white bg-info">
                     <div>
                         <a href="/product/<%= results[i]['pid'] %>">
                             <button type="button" class="btn btn-sm btn-info">View</button>
                         </a>
-                      <button type="button" class="btn btn-sm btn-info">Edit</button>
+                        <% if (uid) { %>
+                            /
+                            <a href="/product/<%= results[i]['pid'] %>">
+                                <button type="button" class="btn btn-sm btn-info">Edit</button>
+                            </a>
+                        <% } %>
                     </div>
-                    <small class="text-muted"></small>
                   </div>
                 </div>
               </div>

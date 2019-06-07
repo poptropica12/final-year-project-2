@@ -88,6 +88,8 @@ app.get('/login', (req, res) => {
 // signout
 app.get('/logout',(req, res) => {
     res.clearCookie('uid');
+    res.clearCookie("type");
+    res.clearCookie("username");
     res.redirect('/');
 });
 
@@ -195,7 +197,7 @@ app.get('/product-listing', function (req, res) {
     conn.query("SELECT pid, name, price, image FROM product", function (error, results, fields) {
         if (error) throw error;
         // console.log(results);
-        res.render('pages/product-listing', {uid: req.cookies['uid'], results: results});
+        res.render('pages/product-listing', {uid: req.cookies['uid'], type: req.cookies['type'], results: results});
     });
 });
 
@@ -274,7 +276,7 @@ app.get('/records/:pid', (req, res, next) => {
                 results[1][0] = {"pid": req.params.pid};
                 // res.render("/pages/records", {uid: req.cookies['uid'], records: results})
             };
-            res.render("pages/records", {uid: req.cookies['uid'], records: results});
+            res.render("pages/records", {uid: req.cookies['uid'], type: req.cookies['type'], records: results});
         });
     }
     else {
@@ -297,12 +299,16 @@ app.post('/new-record/:pid', (req, res, next) => {
 });
 app.get('/dashboard', (req, res, next) => {
     if (req.cookies['uid']) {
-        conn.query("SELECT * FROM sales ORDER BY date DESC", function (error, results, fields) {
-            if (error) throw error;
-            // console.log(JSON.stringify(results[0]));
-            res.render('pages/dashboard', {uid: req.cookies['uid']});
-        });
-
+        if (req.cookies['type'] == "admin") {
+            conn.query("SELECT * FROM sales ORDER BY date DESC", function (error, results, fields) {
+                if (error) throw error;
+                // console.log(JSON.stringify(results[0]));
+                res.render('pages/dashboard', {uid: req.cookies['uid']});
+            });
+        }
+        else {
+            res.redirect("/?permission=" + false);
+        };
         // res.render("pages/dashboard");
     }
     else {
@@ -312,21 +318,25 @@ app.get('/dashboard', (req, res, next) => {
 
 app.get('/annual-sales', (req, res, next) => {
     if(req.cookies['uid']) {
-        var sql = [];
-        sql[0] = "SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid, YEAR(date) ORDER BY `Total sales` DESC;";
-        sql[1] = "SELECT * FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS total FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY sales.pid) AS a INNER JOIN (SELECT MAX(Total_sales) AS Maximum FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total_sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY pid, YEAR(date)) AS temp) AS b ON a.total = b.Maximum;";
-        sql[2] = "SELECT YEAR(date) AS \"Year\", sales.pid, sales.qty, product.name FROM `sales` INNER JOIN product ON sales.pid = product.pid WHERE YEAR(date) = YEAR(SYSDATE());";
-        sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(date) = YEAR(SYSDATE()) GROUP BY sales.pid;";
-        conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
-            // console.log(results[0]);
-            if (error) throw error;
-            if (results[0][0] == "") {
-                results[0][0] = {"Total sales": 0};
-            }
+        if (req.cookies["type"] == "admin") {
+            var sql = [];
+            sql[0] = "SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid, YEAR(date) ORDER BY `Total sales` DESC;";
+            sql[1] = "SELECT * FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS total FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY sales.pid) AS a INNER JOIN (SELECT MAX(Total_sales) AS Maximum FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total_sales\", YEAR(sales.date) AS \"Year\" FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY pid, YEAR(date)) AS temp) AS b ON a.total = b.Maximum;";
+            sql[2] = "SELECT YEAR(date) AS \"Year\", sales.pid, sales.qty, product.name FROM `sales` INNER JOIN product ON sales.pid = product.pid WHERE YEAR(date) = YEAR(SYSDATE());";
+            sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE YEAR(date) = YEAR(SYSDATE()) GROUP BY sales.pid;";
+            conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
+                // console.log(results[0]);
+                if (error) throw error;
+                if (results[0][0] == "") {
+                    results[0][0] = {"Total sales": 0};
+                }
 
-            res.render('pages/annual-sales', {uid: req.cookies["uid"], results: results});
-        });
-
+                res.render('pages/annual-sales', {uid: req.cookies["uid"], results: results});
+            });
+        }
+        else {
+            res.redirect("/?permission=" + false);
+        };
     }
     else {
         res.redirect('/login?login=' + false);
@@ -334,20 +344,25 @@ app.get('/annual-sales', (req, res, next) => {
 });
 app.get('/monthly-sales', (req, res, next) => {
     if (req.cookies['uid']) {
-        var sql = [];
-        sql[0] = "SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total sales\", MONTHNAME(sales.date) AS \"Month\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid, MONTHNAME(sales.date) ORDER BY `Total sales` DESC;";
-        sql[1] = "SELECT * FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS total FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY sales.pid) AS a INNER JOIN (SELECT MAX(Total_sales) AS Maximum FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total_sales\", MONTH(sales.date) AS \"Month\" FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY pid, MONTH(date)) AS temp) AS b ON a.total = b.Maximum;";
-        sql[2] = "SELECT MONTHNAME(date) AS \"Month\", sales.pid, sales.qty, product.name FROM `sales` INNER JOIN product ON sales.pid = product.pid WHERE MONTH(date) = MONTH(SYSDATE());";
-        sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE MONTH(date) = MONTH(SYSDATE()) GROUP BY sales.pid;";
-        conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
-            // console.log(results[0]);
-            if (error) throw error;
-            if (results[0][0] == "") {
-                results[0][0] = {"Total sales": 0};
-            }
+        if (req.cookies["type"] == "admin") {
+            var sql = [];
+            sql[0] = "SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total sales\", MONTHNAME(sales.date) AS \"Month\" FROM sales INNER JOIN product ON sales.pid = product.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid, MONTHNAME(sales.date) ORDER BY `Total sales` DESC;";
+            sql[1] = "SELECT * FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS total FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY sales.pid) AS a INNER JOIN (SELECT MAX(Total_sales) AS Maximum FROM (SELECT sales.pid, product.name, SUM(sales.qty) AS \"Total_sales\", MONTH(sales.date) AS \"Month\" FROM sales INNER JOIN product ON sales.pid = product.pid GROUP BY pid, MONTH(date)) AS temp) AS b ON a.total = b.Maximum;";
+            sql[2] = "SELECT MONTHNAME(date) AS \"Month\", sales.pid, sales.qty, product.name FROM `sales` INNER JOIN product ON sales.pid = product.pid WHERE MONTH(date) = MONTH(SYSDATE());";
+            sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE MONTH(date) = MONTH(SYSDATE()) GROUP BY sales.pid;";
+            conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
+                // console.log(results[0]);
+                if (error) throw error;
+                if (results[0][0] == "") {
+                    results[0][0] = {"Total sales": 0};
+                }
 
-            res.render('pages/monthly-sales', {uid: req.cookies["uid"], results: results});
-        });
+                res.render('pages/monthly-sales', {uid: req.cookies["uid"], results: results});
+            });
+        }
+        else {
+            res.redirect("/?permission=" + false);
+        };
     }
     else {
         res.redirect('/login?login=' + false);
@@ -356,20 +371,25 @@ app.get('/monthly-sales', (req, res, next) => {
 
 app.get('/weekly-sales', (req, res, next) => {
     if (req.cookies['uid']) {
-        var sql = [];
-        sql[0] = "SELECT `sales`.`pid`, `product`.`name`, SUM(`sales`.`qty`) AS \"Total sales\", DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS \"Date\" FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`sales`.`date` BETWEEN SYSDATE() - INTERVAL 7 DAY AND SYSDATE()) GROUP BY `pid`, `sales`.`date` ORDER BY `Total sales` DESC;";
-        sql[1] = "SELECT * FROM (SELECT `sales`.`pid`, `product`.`name`, SUM(`sales`.`qty`) AS \"Total sales\", DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS \"Date\" FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY `sales`.`pid`, `sales`.`date`) AS a INNER JOIN (SELECT MAX(`a`.`Total sales`) AS \"Maximum\" FROM (SELECT `sales`.`pid`, `product`.`name`, SUM(`sales`.`qty`) AS \"Total sales\", DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS \"Date\" FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY `sales`.`pid`, `sales`.`date`) AS a) AS b ON a.`Total sales` = b.`Maximum`;";
-        sql[2] = "SELECT DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS \"Date\", `sales`.`pid`, `sales`.`qty`, `product`.`name` FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE());";
-        sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid;";
-        conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
-            // console.log(results[0][0]['Date']);
-            if (error) throw error;
-            if (results[0][0] == "") {
-                results[0][0] = {"Total sales": 0};
-            }
+        if (req.cookies["type"] == "admin") {
+            var sql = [];
+            sql[0] = "SELECT `sales`.`pid`, `product`.`name`, SUM(`sales`.`qty`) AS \"Total sales\", DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS \"Date\" FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`sales`.`date` BETWEEN SYSDATE() - INTERVAL 7 DAY AND SYSDATE()) GROUP BY `pid`, `sales`.`date` ORDER BY `Total sales` DESC;";
+            sql[1] = "SELECT * FROM (SELECT `sales`.`pid`, `product`.`name`, SUM(`sales`.`qty`) AS \"Total sales\", DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS \"Date\" FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY `sales`.`pid`, `sales`.`date`) AS a INNER JOIN (SELECT MAX(`a`.`Total sales`) AS \"Maximum\" FROM (SELECT `sales`.`pid`, `product`.`name`, SUM(`sales`.`qty`) AS \"Total sales\", DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS \"Date\" FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY `sales`.`pid`, `sales`.`date`) AS a) AS b ON a.`Total sales` = b.`Maximum`;";
+            sql[2] = "SELECT DATE_FORMAT(`sales`.`date`, \"%d-%m-%Y, %W\") AS \"Date\", `sales`.`pid`, `sales`.`qty`, `product`.`name` FROM `sales` INNER JOIN `product` ON `sales`.`pid` = `product`.`pid` WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE());";
+            sql[3] = "SELECT sales.pid, product.name, COUNT(*) AS number FROM sales INNER JOIN product ON sales.pid = product.pid WHERE (`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid;";
+            conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
+                // console.log(results[0][0]['Date']);
+                if (error) throw error;
+                if (results[0][0] == "") {
+                    results[0][0] = {"Total sales": 0};
+                }
 
-            res.render('pages/weekly-sales', {uid: req.cookies["uid"], results: results});
-        });
+                res.render('pages/weekly-sales', {uid: req.cookies["uid"], results: results});
+            });
+        }
+        else {
+            res.redirect("/?permission=" + false);
+        };
     }
     else {
         res.redirect('/login?login=' + false);
@@ -378,21 +398,25 @@ app.get('/weekly-sales', (req, res, next) => {
 
 app.get('/annual-revenue', (req, res, next) => {
     if(req.cookies['uid']) {
-        var sql = [];
-        sql[0] = "SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC;";
-        sql[1] = "SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC;";
-        sql[2] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY sales.pid ORDER BY `Total revenue` DESC, product.price ASC LIMIT 1) AS b ON a.`Total revenue` = b.`Total revenue`;";
-        sql[3] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY sales.pid ORDER BY `Total profit` DESC, product.price ASC LIMIT 1) AS b ON a.`Total profit` = b.`Total profit`;";
-        conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
-            // console.log(results[0]);
-            if (error) throw error;
-            if (results[0][0] == "") {
-                results[0][0] = {"Total sales": 0};
-            }
+        if (req.cookies["type"] == "admin") {
+            var sql = [];
+            sql[0] = "SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC;";
+            sql[1] = "SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC;";
+            sql[2] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY sales.pid ORDER BY `Total revenue` DESC, product.price ASC LIMIT 1) AS b ON a.`Total revenue` = b.`Total revenue`;";
+            sql[3] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY sales.pid ORDER BY `Total profit` DESC, product.price ASC LIMIT 1) AS b ON a.`Total profit` = b.`Total profit`;";
+            conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
+                // console.log(results[0]);
+                if (error) throw error;
+                if (results[0][0] == "") {
+                    results[0][0] = {"Total sales": 0};
+                }
 
-            res.render('pages/annual-revenue', {uid: req.cookies["uid"], results: results});
-        });
-
+                res.render('pages/annual-revenue', {uid: req.cookies["uid"], results: results});
+            });
+        }
+        else {
+            res.redirect("/?permission=" + false);
+        };
     }
     else {
         res.redirect('/login?login=' + false);
@@ -401,21 +425,25 @@ app.get('/annual-revenue', (req, res, next) => {
 
 app.get('/monthly-revenue', (req, res, next) => {
     if(req.cookies['uid']) {
-        var sql = [];
-        sql[0] = "SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", MONTHNAME(sales.date) AS \"Month\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC;";
-        sql[1] = "SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", MONTHNAME(sales.date) AS \"Month\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC;";
-        sql[2] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", MONTH(SYSDATE()) AS \"Month\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY sales.pid ORDER BY `Total revenue` DESC, product.price ASC LIMIT 1) AS b ON a.`Total revenue` = b.`Total revenue`;";
-        sql[3] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", MONTH(SYSDATE()) AS \"Month\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY sales.pid ORDER BY `Total profit` DESC, product.price ASC LIMIT 1) AS b ON a.`Total profit` = b.`Total profit`;";
-        conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
-            // console.log(results[0]);
-            if (error) throw error;
-            if (results[0][0] == "") {
-                results[0][0] = {"Total sales": 0};
-            }
+        if (req.cookies["type"] == "admin") {
+            var sql = [];
+            sql[0] = "SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", MONTHNAME(sales.date) AS \"Month\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC;";
+            sql[1] = "SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", MONTHNAME(sales.date) AS \"Month\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC;";
+            sql[2] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", MONTH(SYSDATE()) AS \"Month\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY sales.pid ORDER BY `Total revenue` DESC, product.price ASC LIMIT 1) AS b ON a.`Total revenue` = b.`Total revenue`;";
+            sql[3] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", MONTH(SYSDATE()) AS \"Month\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE MONTH(sales.date) = MONTH(SYSDATE()) GROUP BY sales.pid ORDER BY `Total profit` DESC, product.price ASC LIMIT 1) AS b ON a.`Total profit` = b.`Total profit`;";
+            conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
+                // console.log(results[0]);
+                if (error) throw error;
+                if (results[0][0] == "") {
+                    results[0][0] = {"Total sales": 0};
+                }
 
-            res.render('pages/monthly-revenue', {uid: req.cookies["uid"], results: results});
-        });
-
+                res.render('pages/monthly-revenue', {uid: req.cookies["uid"], results: results});
+            });
+        }
+        else {
+            res.redirect("/?permission=" + false);
+        };
     }
     else {
         res.redirect('/login?login=' + false);
@@ -424,21 +452,25 @@ app.get('/monthly-revenue', (req, res, next) => {
 
 app.get('/weekly-revenue', (req, res, next) => {
     if(req.cookies['uid']) {
-        var sql = [];
-        sql[0] = "SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", DATE_FORMAT(sales.date, \"%d-%m-%Y, %W\") AS \"Date\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC;";
-        sql[1] = "SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", DATE_FORMAT(sales.date, \"%d-%m-%Y, %W\") AS \"Date\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC;";
-        sql[2] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", DATE_FORMAT(sales.date, \"%d-%m-%Y, %W\") AS \"Date\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid ORDER BY `Total revenue` DESC, product.price ASC LIMIT 1) AS b ON a.`Total revenue` = b.`Total revenue`;";
-        sql[3] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", DATE_FORMAT(sales.date, \"%d-%m-%Y, %W\") AS \"Date\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid ORDER BY `Total profit` DESC, product.price ASC LIMIT 1) AS b ON a.`Total profit` = b.`Total profit`;";
-        conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
-            // console.log(results[0]);
-            if (error) throw error;
-            if (results[0][0] == "") {
-                results[0][0] = {"Total sales": 0};
-            }
+        if (req.cookies["type"] == "admin") {
+            var sql = [];
+            sql[0] = "SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", DATE_FORMAT(sales.date, \"%d-%m-%Y, %W\") AS \"Date\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC;";
+            sql[1] = "SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", DATE_FORMAT(sales.date, \"%d-%m-%Y, %W\") AS \"Date\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC;";
+            sql[2] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", DATE_FORMAT(sales.date, \"%d-%m-%Y, %W\") AS \"Date\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid ORDER BY `Total revenue` DESC, product.price ASC LIMIT 1) AS b ON a.`Total revenue` = b.`Total revenue`;";
+            sql[3] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", DATE_FORMAT(sales.date, \"%d-%m-%Y, %W\") AS \"Date\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid ORDER BY `Total profit` DESC, product.price ASC LIMIT 1) AS b ON a.`Total profit` = b.`Total profit`;";
+            conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
+                // console.log(results[0]);
+                if (error) throw error;
+                if (results[0][0] == "") {
+                    results[0][0] = {"Total sales": 0};
+                }
 
-            res.render('pages/weekly-revenue', {uid: req.cookies["uid"], results: results});
-        });
-
+                res.render('pages/weekly-revenue', {uid: req.cookies["uid"], results: results});
+            });
+        }
+        else {
+            res.render("/?permission=" + false);
+        };
     }
     else {
         res.redirect('/login?login=' + false);
@@ -447,21 +479,26 @@ app.get('/weekly-revenue', (req, res, next) => {
 
 app.get('/operating-profit-margin', (req, res, next) => {
     if (req.cookies['uid']) {
-        var sql = [];
-        sql[0] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(sales.date) ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC LIMIT 1;"
-        sql[1] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(SYSDATE()) ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC LIMIT 1;";
-        conn.query(sql[0] + sql[1], function(error, results, fields) {
-            // console.log(results[0][0]['Total sales']);
-            // console.log(results[1][0]["Total sales"]);
-            if (error) throw error;
-            if (results[0][0] == "") {
-                console.log("No profit.");
-                results[0][0] = {"Total sales": 0};
-            };
-            // console.log("results[0][0]['Total sales'] =", results[0][0]['Total sales']);
-            // console.log("results[1][0]['Total sales'] = ", results[1][0]["Total sales"]);
-            res.render('pages/operating-profit-margin', {uid: req.cookies["uid"], results: results});
-        });
+        if (req.cookies["type"] == "admin") {
+            var sql = [];
+            sql[0] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(sales.date) ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC LIMIT 1;"
+            sql[1] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(SYSDATE()) ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC LIMIT 1;";
+            conn.query(sql[0] + sql[1], function(error, results, fields) {
+                // console.log(results[0][0]['Total sales']);
+                // console.log(results[1][0]["Total sales"]);
+                if (error) throw error;
+                if (results[0][0] == "") {
+                    console.log("No profit.");
+                    results[0][0] = {"Total sales": 0};
+                };
+                // console.log("results[0][0]['Total sales'] =", results[0][0]['Total sales']);
+                // console.log("results[1][0]['Total sales'] = ", results[1][0]["Total sales"]);
+                res.render('pages/operating-profit-margin', {uid: req.cookies["uid"], results: results});
+            });
+        }
+        else {
+            res.redirect("/?permission=" + false);
+        };
     }
     else {
         res.redirect('/login?login=' + false);
@@ -470,21 +507,26 @@ app.get('/operating-profit-margin', (req, res, next) => {
 
 app.get('/gross-profit-margin', (req, res, next) => {
     if (req.cookies['uid']) {
-        var sql = [];
-        sql[0] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(sales.date) ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC LIMIT 1;"
-        sql[1] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(SYSDATE()) ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC LIMIT 1;";
-        conn.query(sql[0] + sql[1], function(error, results, fields) {
-            // console.log(results[0][0]['Total sales']);
-            // console.log(results[1][0]["Total sales"]);
-            if (error) throw error;
-            if (results[0][0] == "") {
-                console.log("No profit.");
-                results[0][0] = {"Total sales": 0};
-            };
-            // console.log("results[0][0]['Total sales'] =", results[0][0]['Total sales']);
-            // console.log("results[1][0]['Total sales'] = ", results[1][0]["Total sales"]);
-            res.render('pages/gross-profit-margin', {uid: req.cookies["uid"], results: results});
-        });
+        if (req.cookies["type"] == "admin") {
+            var sql = [];
+            sql[0] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(sales.date) ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC LIMIT 1;"
+            sql[1] = "SELECT SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", YEAR(SYSDATE()) AS \"Year\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE YEAR(sales.date) = YEAR(SYSDATE()) GROUP BY YEAR(SYSDATE()) ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC LIMIT 1;";
+            conn.query(sql[0] + sql[1], function(error, results, fields) {
+                // console.log(results[0][0]['Total sales']);
+                // console.log(results[1][0]["Total sales"]);
+                if (error) throw error;
+                if (results[0][0] == "") {
+                    console.log("No profit.");
+                    results[0][0] = {"Total sales": 0};
+                };
+                // console.log("results[0][0]['Total sales'] =", results[0][0]['Total sales']);
+                // console.log("results[1][0]['Total sales'] = ", results[1][0]["Total sales"]);
+                res.render('pages/gross-profit-margin', {uid: req.cookies["uid"], results: results});
+            });
+        }
+        else {
+            res.redirect("/?permission=" + false);
+        }
     }
     else {
         res.redirect('/login?login=' + false);
@@ -493,33 +535,57 @@ app.get('/gross-profit-margin', (req, res, next) => {
 
 app.get("/cost", (req, res, next) => {
     if (req.cookies['uid']) {
-        var sql = [];
-        sql[0] = "SELECT `product`.`pid`, `product`.`name`, `product`.`cost` FROM `product` ORDER BY product.cost DESC, product.pid ASC;";
-        sql[1] = "SELECT product.pid, product.name, MIN(`product`.`cost`) AS \"Minimum unit\", MIN(`product`.`cost`) * 1000 AS \"Minimum\" FROM `product` LIMIT 1;";
-        sql[2] = "SELECT product.pid, product.name, MAX(`product`.`cost`) AS \"Maximum unit\", MAX(`product`.`cost`) * 1000 AS \"Maximum\" FROM `product` LIMIT 1;";
-        sql[3] = "SELECT SUM(cost) AS \"Total unit cost\", SUM(cost) * 1000 AS \"Total cost\" FROM product;";
-        conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
-            if (error) throw error;
-            console.log(results[1][0]['Minimum']);
-            console.log(results[2][0]['Maximum']);
-            console.log(results[0]);
-            if (results[0] == "") {
-                results[0][0] = {"pid": 1, "cost": 0};
-                results[1][0] = {"pid": 1, "Minimum": 0, "Minimum unit": 0};
-                results[2][0] = {"pid": 1, "Maximum": 0, "Maximum unit": 0};
-                rseults[3][0] = {"Total unit cost": 0, "Total cost": 0};
-                console.log("No product costs available.");
-            }
-            else {
+        if (req.cookies['type'] == "admin") {
+            var sql = [];
+            sql[0] = "SELECT `product`.`pid`, `product`.`name`, `product`.`cost` FROM `product` ORDER BY product.cost DESC, product.pid ASC;";
+            sql[1] = "SELECT product.pid, product.name, product.cost AS \"Minimum unit\", product.cost * 1000 AS \"Minimum\" FROM product WHERE product.cost = (SELECT MIN(product.cost) AS \"Minimum unit\" FROM product);";
+            sql[2] = "SELECT product.pid, product.name, MAX(`product`.`cost`) AS \"Maximum unit\", MAX(`product`.`cost`) * 1000 AS \"Maximum\" FROM `product` LIMIT 1;";
+            sql[3] = "SELECT SUM(cost) AS \"Total unit cost\", SUM(cost) * 1000 AS \"Total cost\" FROM product;";
+            conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
+                if (error) throw error;
+                console.log(results[1][0]['Minimum']);
+                console.log(results[2][0]['Maximum']);
+                console.log(results[0]);
+                if (results[0] == "") {
+                    results[0][0] = {"pid": 1, "cost": 0};
+                    results[1][0] = {"pid": 1, "Minimum": 0, "Minimum unit": 0};
+                    results[2][0] = {"pid": 1, "Maximum": 0, "Maximum unit": 0};
+                    rseults[3][0] = {"Total unit cost": 0, "Total cost": 0};
+                    console.log("No product costs available.");
+                }
+                else {
 
-                console.log("All good.");
-            };
-            res.render("pages/cost", {uid: req.cookies["uid"], results: results});
-        });
+                    console.log("All good.");
+                };
+                res.render("pages/cost", {uid: req.cookies["uid"], results: results});
+            });
+        } else {
+            res.redirect("/?permission=" + false);
+        };
     }
     else {
-        res.redirect("/login?ogin=" + false);
+        res.redirect("/login?login=" + false);
     };
+});
+
+app.get("/about", (req, res, next) => {
+    res.render("pages/about", {uid: req.cookies["uid"], type: req.cookies["type"]});
+});
+
+app.get("/features", (req, res, next) => {
+    res.render("pages/features", {uid: req.cookies["uid"], type: req.cookies["type"]});
+});
+
+app.get("/404-error", (req, res, next) => {
+    res.render("pages/404-error", {uid: req.cookies["uid"], type: req.cookies["type"]});
+});
+
+app.get("/get-started", (req, res, next) => {
+    res.render("pages/get-started", {uid: req.cookies["uid"], type: req.cookies["type"]});
+});
+
+app.get("/FAQ", (req, res, next) => {
+    res.render("pages/FAQ", {uid: req.cookies["uid"], type: req.cookies["type"]});
 });
 // app.get('/test', (req, res, next) => {
 //     if (req.cookies['uid']) {
