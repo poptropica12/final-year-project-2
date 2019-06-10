@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partial/head %>
+    <title>Customer Relationship System</title>
+</head>
+
+<style>
+    img {
+        height: 10%;
+        width:10%;
+        /* object-fit:cover; */
+    }
+    body {
+        background-image: url('data:image/svg+xml,%3Csvg width="52" height="26" viewBox="0 0 52 26" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.4"%3E%3Cpath d="M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z" /%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+    }
+
+    div.row {
+        padding: 15px 0px;
+    }
+    /* .height-transition {
+        -webkit-transition: max-height 0.5s ease-in-out;
+        -moz-transition: max-height 0.5s ease-in-out;
+        -o-transition: max-height 0.5s ease-in-out;
+        transition: max-height 0.5s ease-in-out;
+        overflow-y: hidden;
+    }
+    .height-transition-hidden {
+        max-height: 0;
+    } */
+</style>
+
+
+<body>
+    <%- include('../partial/navigation', {title: "about"}) %>
+    <!--  if (logged)  -->
+        <div class="jumbotron">
+            <div class="row">
+                <h1 class="display-4">All starts from a little inspiration...</h1>
+            </div>
+            <div class="row">
+                <p class="">
+                    SCOPE CRM began in 2018. At first it was just a random joke between a few college classmates, I was having a bet between my classmantes. They were saying that I am not able to develop a well-developed system for customer relationship management and they bet $500 for that. In order to prove myself, not just because $500 is tempting at that moment, but because I would like to be a successful person in the society, I started my research in the development.
+                </p>
+            </div>
+            <div class="row">
+                <blockquote class="blockquote">
+                    <p class="mb-0 text-primary">Hey dude, it was suppose to be a joke!</p>
+                    <footer class="blockquote-footer">One of my classmates who does not believe in me</footer>
+                </blockquote>
+            </div>
+            <div class="row">
+                <p>
+                    The next thing I know is I devoted more than 8 hours a day (Well, sometimes 9) in designing and refining the whole system to cater the market needs. There are tones of open source CRM systems deployed online, which are powerful enough to do different kinds of management. Yet, I found my way out and did something which is not really intended before...
+                </p>
+            </div>
+            <div class="row">
+                <blockquote class="blockquote">
+                    <p class="mb-0 text-primary">Is this thing gonna work?</p>
+                    <footer class="blockquote-footer">One of my classmates who does not want to pay that $500</footer>
+                </blockquote>
+            </div>
+            <div class="row">
+                <p>
+                    There are different CRM systems which help in analysing customer data for the service provider, so what is so special about SCOPE CRM? I discovered although there are a lot of statistical analysis tools implemented in the CRM systems, they could rarely or even never come to a conclusion to the results gained. SCOPE CRM generate business recommendations for our clients which save a lot of time in deducing the statistical results.
+                </p>
+            </div>
+        </div>
+
+    <% include ../partial/footer %>
+</body>
+
+<script>
+    // var url = new URL(window.location.href);
+    // var permission = url.searchParams.get("permission");
+    // if (permission == "false") {
+    //     $("#denied").css("display", "block");
+    // }
+    // else {
+    //     $("#denied").css("display", "none");
+    // };
+    // $(document).ready(function(){
+    //     $("p").click(function(){
+    //         $(this).hide();
+    //     });
+    // });
+</script>
+
+</html>
