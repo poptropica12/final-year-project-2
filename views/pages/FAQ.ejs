@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <% include ../partial/head %>
+        <title>Customer Relationship System</title>
+    </head>
+
+    <style>
+        img {
+            height: 10%;
+            width:10%;
+            /* object-fit:cover; */
+        }
+        body {
+            background-image: url('data:image/svg+xml,%3Csvg width="52" height="26" viewBox="0 0 52 26" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.4"%3E%3Cpath d="M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z" /%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+        }
+        /* .height-transition {
+            -webkit-transition: max-height 0.5s ease-in-out;
+            -moz-transition: max-height 0.5s ease-in-out;
+            -o-transition: max-height 0.5s ease-in-out;
+            transition: max-height 0.5s ease-in-out;
+            overflow-y: hidden;
+        }
+        .height-transition-hidden {
+            max-height: 0;
+        } */
+    </style>
+
+    <body>
+        <%- include('../partial/navigation', {title: "FAQ"}) %>
+        <div class="jumbotron">
+            <div class="container-fluid ">
+                <h1 class="display-4">Freaquently Asked Questions</h1>
+                <div class="panel-group" id="faqAccordion">
+                    <div class="panel panel-default ">
+                        <div class="panel-heading accordion-toggle question-toggle collapsed" data-toggle="collapse" data-parent="#faqAccordion" data-target="#question0">
+                            <h4 class="panel-title">
+                                <a href="#" class="ing">Q: What is SCOPE?</a>
+                            </h4>
+
+                        </div>
+                        <div id="question0" class="panel-collapse collapse" style="height: 0px;">
+                            <div class="panel-body">
+                                <h5><span class="label label-primary">Answer</span></h5>
+
+                                <p>SCOPE stands for <a href="https://www.scope.edu/">School of Continuing and Professional Education</a>, but in case this is not the answer you are looking for, SCOPE is also a powerful Customer Relationship Management System. It provides statistical analysis with business recommendations which is popular among businessmen. If you are interested and wanted to learn more about SCOPE, please visit the <a href="/about">about page</a> and <a href="/features">features page</a> for more details.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default ">
+                        <div class="panel-heading accordion-toggle collapsed question-toggle" data-toggle="collapse" data-parent="#faqAccordion" data-target="#question1">
+                            <h4 class="panel-title text-primary">
+                                <a href="#" class="ing">Q: Why should we use SCOPE but not <a href="https://suitecrm.com/">Suite</a>, <a href="https://www.sugarcrm.com/">Sugar</a> or <a href="https://www.vtiger.com/">vtiger</a>?
+                            </h4>
+
+                        </div>
+                        <div id="question1" class="panel-collapse collapse" style="height: 0px;">
+                            <div class="panel-body">
+                                <h5><span class="label label-primary">Answer</span></h5>
+
+                                <p>Unlike those CRM systems mentioned above, SCOPE provides customized features with the most simplex user interface. Business coworkers usually are frustrated with the difficult operations of generating a monthly sales report or the annual revenue report. When you are using SCOPE, it is not necessary to worry any of the above issues. With a simple click, we do it all for you, immediately, accurately and neatly. I would be appreciated if you do not click any of those links in the question title.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default ">
+                        <div class="panel-heading accordion-toggle collapsed question-toggle" data-toggle="collapse" data-parent="#faqAccordion" data-target="#question2">
+                            <h4 class="panel-title">
+                                <a href="#" class="ing">Q: How does SCOPE help in my business exactly?</a>
+                            </h4>
+
+                        </div>
+                        <div id="question2" class="panel-collapse collapse" style="height: 0px;">
+                            <div class="panel-body">
+                                <h5><span class="label label-primary">Answer</span></h5>
+
+                                <p>SCOPE provides a control panel for admins to edit, delete or add product details related to your own business like others. It also has a dashboard accessible by the admins to monitor your business situation. Sales recommendations are provided from time to time and let you resposnse quickly to the market needs, and ultimately, increase your market share and make more profit.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default ">
+                        <div class="panel-heading accordion-toggle collapsed question-toggle" data-toggle="collapse" data-parent="#faqAccordion" data-target="#question3">
+                            <h4 class="panel-title">
+                                <a href="#" class="ing">Q: Okay, where should I start with?</a>
+                            </h4>
+
+                        </div>
+                        <div id="question3" class="panel-collapse collapse" style="height: 0px;">
+                            <div class="panel-body">
+                                <h5><span class="label label-primary">Answer</span></h5>
+
+                                <p>Simply register an account and you can use our services as a customer or an admin. For beginners, please visit the "<a href="/get-started">Get Started</a>" page for step by step instructions. Of course, you are always welcomed to contact us via any methods we provided in the footer: <a href="https://www.facebook.com/">Facebook</a>, <a href="https://twitter.com/">Twitter</a>, <a href="https://killedbygoogle.com/">Google+</a> or even through <a href="mailto:chengy38@coventry.ac.uk?cc=yncheng22-c@my.cityu.edu.hk&bcc=yncheng22@gapps.cityu.edu.hk&subject=Enquiries%20on%20SCOPE%@0CRM&body=I%20would%20like%to%20enquiry%20on...">email</a>. Your valuable, feedback is our only way to improve. <span class="text-muted">Not necessarily, though</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default ">
+                        <div class="panel-heading accordion-toggle collapsed question-toggle" data-toggle="collapse" data-parent="#faqAccordion" data-target="#question4">
+                            <h4 class="panel-title">
+                                <a href="#" class="ing">Q: Well...do I have to pay for this? I cannot even afford a $500 bet, you know...</a>
+                            </h4>
+
+                        </div>
+                        <div id="question4" class="panel-collapse collapse" style="height: 0px;">
+                            <div class="panel-body">
+                                <h5><span class="label label-primary">Answer</span></h5>
+
+                                <p>Well, lucky for you. We are not charging any of you in the current stage. Since the system might still consist of several unknown bugs or errors which could not be considered as a final deployment solution. We would like to provide our service to our customers, and that is you. In return, we would like your feedback on our system and report any notable bugs or experiences as much as possible. <span class="text-muted">Yeah...I am still waiting for that $500 from that bastard. </span>Of course, we will let you know if we cannot pay for what we bet some day.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default ">
+                        <div class="panel-heading accordion-toggle collapsed question-toggle" data-toggle="collapse" data-parent="#faqAccordion" data-target="#question5">
+                            <h4 class="panel-title text-primary">
+                                <a href="#" class="ing">Q: What happened to that guy you have mentioned earlier in the <a href="/about">about</a> page?</a>
+                            </h4>
+
+                        </div>
+                        <div id="question5" class="panel-collapse collapse" style="height: 0px;">
+                            <div class="panel-body">
+                                <h5><span class="label label-primary">Answer</span></h5>
+
+                                <p>Speaking of him, he claimed that <i>he is broke coincidentally</i> when I ask for the money. He has to work for me until he has paid for what he had done. So yeah, he is broke for now, both physically and mentally.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!--/panel-group-->
+            </div>
+        </div>
+        <% include ../partial/footer %>
+    </body>
+</html>

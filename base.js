@@ -327,7 +327,7 @@ app.get('/annual-sales', (req, res, next) => {
             conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
                 // console.log(results[0]);
                 if (error) throw error;
-                if (results[0][0] == "") {
+                if (results[0][0] === undefined) {
                     results[0][0] = {"Total sales": 0};
                 }
 
@@ -353,7 +353,7 @@ app.get('/monthly-sales', (req, res, next) => {
             conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
                 // console.log(results[0]);
                 if (error) throw error;
-                if (results[0][0] == "") {
+                if (results[0][0] === undefined) {
                     results[0][0] = {"Total sales": 0};
                 }
 
@@ -380,7 +380,7 @@ app.get('/weekly-sales', (req, res, next) => {
             conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
                 // console.log(results[0][0]['Date']);
                 if (error) throw error;
-                if (results[0][0] == "") {
+                if (results[0][0] === undefined) {
                     results[0][0] = {"Total sales": 0};
                 }
 
@@ -407,7 +407,7 @@ app.get('/annual-revenue', (req, res, next) => {
             conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
                 // console.log(results[0]);
                 if (error) throw error;
-                if (results[0][0] == "") {
+                if (results[0][0] === undefined) {
                     results[0][0] = {"Total sales": 0};
                 }
 
@@ -434,7 +434,7 @@ app.get('/monthly-revenue', (req, res, next) => {
             conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
                 // console.log(results[0]);
                 if (error) throw error;
-                if (results[0][0] == "") {
+                if (results[0][0] === undefined) {
                     results[0][0] = {"Total sales": 0};
                 }
 
@@ -459,9 +459,9 @@ app.get('/weekly-revenue', (req, res, next) => {
             sql[2] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, SUM(sales.qty) AS \"Total sales\", ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\", DATE_FORMAT(sales.date, \"%d-%m-%Y, %W\") AS \"Date\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY pid ORDER BY `Total revenue` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM(product.price * sales.qty), 2) AS \"Total revenue\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid ORDER BY `Total revenue` DESC, product.price ASC LIMIT 1) AS b ON a.`Total revenue` = b.`Total revenue`;";
             sql[3] = "SELECT a.* FROM (SELECT product.pid, product.name, product.price, product.cost, SUM(sales.qty) AS \"Total sales\", ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\", DATE_FORMAT(sales.date, \"%d-%m-%Y, %W\") AS \"Date\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY pid ORDER BY `Total profit` DESC, `Total sales` DESC, product.price ASC) AS a INNER JOIN (SELECT ROUND(SUM((product.price - product.cost)* sales.qty), 2) AS \"Total profit\" FROM product INNER JOIN sales ON product.pid = sales.pid WHERE (`sales`.`date` BETWEEN STR_TO_DATE(SYSDATE() - INTERVAL 7 DAY, \"%Y-%m-%d\") AND SYSDATE()) GROUP BY sales.pid ORDER BY `Total profit` DESC, product.price ASC LIMIT 1) AS b ON a.`Total profit` = b.`Total profit`;";
             conn.query(sql[0] + sql[1] + sql[2] + sql[3], function (error, results, fields) {
-                // console.log(results[0]);
+                // console.log(results[0][0]);
                 if (error) throw error;
-                if (results[0][0] == "") {
+                if (results[0][0] === undefined) {
                     results[0][0] = {"Total sales": 0};
                 }
 
@@ -487,7 +487,7 @@ app.get('/operating-profit-margin', (req, res, next) => {
                 // console.log(results[0][0]['Total sales']);
                 // console.log(results[1][0]["Total sales"]);
                 if (error) throw error;
-                if (results[0][0] == "") {
+                if (results[0][0] === undefined) {
                     console.log("No profit.");
                     results[0][0] = {"Total sales": 0};
                 };
@@ -515,7 +515,7 @@ app.get('/gross-profit-margin', (req, res, next) => {
                 // console.log(results[0][0]['Total sales']);
                 // console.log(results[1][0]["Total sales"]);
                 if (error) throw error;
-                if (results[0][0] == "") {
+                if (results[0][0] === undefined) {
                     console.log("No profit.");
                     results[0][0] = {"Total sales": 0};
                 };
@@ -546,7 +546,7 @@ app.get("/cost", (req, res, next) => {
                 console.log(results[1][0]['Minimum']);
                 console.log(results[2][0]['Maximum']);
                 console.log(results[0]);
-                if (results[0] == "") {
+                if (results[0][0] === undefined) {
                     results[0][0] = {"pid": 1, "cost": 0};
                     results[1][0] = {"pid": 1, "Minimum": 0, "Minimum unit": 0};
                     results[2][0] = {"pid": 1, "Maximum": 0, "Maximum unit": 0};
@@ -586,6 +586,18 @@ app.get("/get-started", (req, res, next) => {
 
 app.get("/FAQ", (req, res, next) => {
     res.render("pages/FAQ", {uid: req.cookies["uid"], type: req.cookies["type"]});
+});
+
+app.get("/ROCE", (req, res, next) => {
+    res.render("pages/ROCE", {uid: req.cookies["uid"], type: req.cookies["type"]});
+});
+
+app.get("/break-even-analysis", (req, res, next) => {
+    res.render("pages/break-even-analysis", {uid: req.cookies["uid"], type: req.cookies["type"]});
+});
+
+app.get("/ratio-analysis", (req, res, next) => {
+    res.render("pages/ratio-analysis", {uid: req.cookies["uid"], type: req.cookies["type"]});
 });
 // app.get('/test', (req, res, next) => {
 //     if (req.cookies['uid']) {
