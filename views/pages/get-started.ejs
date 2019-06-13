@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partial/head %>
+    <title>Customer Relationship System</title>
+</head>
+
+<style>
+    img, #SCOPE {
+        height: 10%;
+        width:10%;
+        /* object-fit:cover; */
+    }
+    body {
+        background-image: url('data:image/svg+xml,%3Csvg width="52" height="26" viewBox="0 0 52 26" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.4"%3E%3Cpath d="M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z" /%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+    }
+
+    div.row {
+        padding: 15px 0px;
+    }
+    /* .height-transition {
+        -webkit-transition: max-height 0.5s ease-in-out;
+        -moz-transition: max-height 0.5s ease-in-out;
+        -o-transition: max-height 0.5s ease-in-out;
+        transition: max-height 0.5s ease-in-out;
+        overflow-y: hidden;
+    }
+    .height-transition-hidden {
+        max-height: 0;
+    } */
+    .list-group-item {
+        display: list-item;
+    }
+    li img {
+        padding: 15px;
+    }
+</style>
+
+
+<body>
+    <%- include('../partial/navigation', {title: "get started"}) %>
+    <!--  if (logged)  -->
+        <div class="jumbotron">
+            <div class="row">
+                <h1 class="display-3">Suit up and get started</h1>
+            </div>
+            <div class="row">
+                <ol>
+                    <li class="lead">
+                        If you are new here, click on the right-upper corner for registrating a new account. It should look seomthing like this:
+                        <button class="btn btn-secondary" disabled>Sign up</button>
+                    </li>
+                    <li class="lead">
+                        After clicking to the button, fill in all required information to register a new account as shown in the graph.<img src="/public/Register.jpg" alt="register page">
+                    </li>
+                    <li class="lead">
+                        Great! Now you have successfully registered an account. You would be redirected to the login page or press the <button class="btn btn-secondary" disabled>Login</button> button on the right-upper corner if not. In the login page, type in your username and password which you have just created, then click <button class="btn btn-primary" disabled>Login</button> and hop in! <img src="/public/Login.jpg" alt="login page">
+                    </li>
+                    <li>
+                        Congrats, you are now a member of SCOPE CRM! Click <button class="btn btn-primary" disabled>Product Listing</button> to check all products. Click <img id="SCOPE" src="/public/SCOPE.png" alt="SCOPE logo"> on the left-upper corner to access the dashboard if you are the admin.
+                    </li>
+                </ol>
+            </div>
+            <div class="row">
+                <h1 class="display-4" style="display:block;">Product Listing</h1>
+                <img src="/public/product-listing.jpg" alt="product listing page" style="height:10%;width:10%;padding:15px;">
+            </div>
+            <div class="row">
+                <ol>
+                    <li class="lead">
+                        Click <button class="btn btn-primary" disabled>View</button> or <button class="btn btn-primary" disabled>Edit</button> (Admin only) under a product to view a product's details, relevant comments and ratings or change the details of the product
+                    </li>
+                    <li class="lead">
+                        Products details are shown in the product page. <img src="/public/product.jpg" alt="product page">For normal users, you might leave comments and ratings about the product and submit to the system, admin could check your feedback immediately. You might then click <button class="btn btn-success" disabled><span style="margin-right:20px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true">🛒</span>View sales details</button> to add a sales record (normal user only) or view sales records (admin user only).
+                    <li class="lead">
+                        In the record page, admin users could see all sales records related to the specific product. <img src="/public/admin-record.jpg" alt="admin record page">Normal users could add a new record below after a transaction has been done. <img src="/public/normal-record.jpg" alt="normal record page">
+                    </li>
+                </ol>
+            </div>
+            <div class="row">
+                <h1 class="display-4">Dashboard (Admin only)</h1>
+            </div>
+            <div class="row">
+                <p class="lead">I am sure you are advance users if you have access to this page. Even if you are not, no worries! Contact us via Facebook, Twitter, Email or Google Plus, we provide 24 hours support every day. Please refer to the links in the footer below for further details.</p>
+            </div>
+            <img src="/public/dashboard.jpg" alt="dashboard">
+        </div>
+
+    <% include ../partial/footer %>
+</body>
+
+<script>
+    // var url = new URL(window.location.href);
+    // var permission = url.searchParams.get("permission");
+    // if (permission == "false") {
+    //     $("#denied").css("display", "block");
+    // }
+    // else {
+    //     $("#denied").css("display", "none");
+    // };
+    // $(document).ready(function(){
+    //     $("p").click(function(){
+    //         $(this).hide();
+    //     });
+    // });
+</script>
+
+</html>
