@@ -10,36 +10,36 @@
         <script>
             $(document).ready(function(){
                 //-- Click on detail
-                $("ul.menu-items > li").on("click",function(){
-                    $("ul.menu-items > li").removeClass("active");
-                    $(this).addClass("active");
-                })
-
-                $(".attr,.attr2").on("click",function(){
-                    var clase = $(this).attr("class");
-
-                    $("." + clase).removeClass("active");
-                    $(this).addClass("active");
-                })
+                // $("ul.menu-items > li").on("click",function(){
+                //     $("ul.menu-items > li").removeClass("active");
+                //     $(this).addClass("active");
+                // })
+                //
+                // $(".attr,.attr2").on("click",function(){
+                //     var clase = $(this).attr("class");
+                //
+                //     $("." + clase).removeClass("active");
+                //     $(this).addClass("active");
+                // })
 
                 //-- Click on QUANTITY
-                $(".btn-minus").on("click",function(){
-                    var now = $(".section > div > input").val();
-                    if ($.isNumeric(now)){
-                        if (parseInt(now) -1 > 0){ now--;}
-                        $(".section > div > input").val(now);
-                    }else{
-                        $(".section > div > input").val("1");
-                    }
-                })
-                $(".btn-plus").on("click",function(){
-                    var now = $(".section > div > input").val();
-                    if ($.isNumeric(now)){
-                        $(".section > div > input").val(parseInt(now)+1);
-                    }else{
-                        $(".section > div > input").val("1");
-                    }
-                })
+                // $(".btn-minus").on("click",function(){
+                //     var now = $(".section > div > input").val();
+                //     if ($.isNumeric(now)){
+                //         if (parseInt(now) -1 > 0){ now--;}
+                //         $(".section > div > input").val(now);
+                //     }else{
+                //         $(".section > div > input").val("1");
+                //     }
+                // })
+                // $(".btn-plus").on("click",function(){
+                //     var now = $(".section > div > input").val();
+                //     if ($.isNumeric(now)){
+                //         $(".section > div > input").val(parseInt(now)+1);
+                //     }else{
+                //         $(".section > div > input").val("1");
+                //     }
+                // })
             })
             var url = new URL(window.location.href);
             var qty = url.searchParams.get("qty");
@@ -335,6 +335,9 @@
                     <% } else { %>
                         <div>
                             <h3>To comment, please login as normal users.</h3>
+                            <a href="/product-listing">
+                                <button type="button" class="btn btn-info">Back to products view</button>
+                            </a>
                         </div>
                         <!-- <div class="col-lg-8">
                             <div class="card bg-light mb-3" style="max-width: 20rem;">

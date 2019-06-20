@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2019 年 06 月 04 日 17:02
+-- 產生時間： 2019 年 06 月 20 日 08:55
 -- 伺服器版本： 10.1.40-MariaDB
 -- PHP 版本： 7.3.5
 
@@ -42,10 +42,13 @@ CREATE TABLE `comment` (
 --
 
 INSERT INTO `comment` (`cid`, `comments`, `rating`, `pid`, `uid`, `time`) VALUES
-(1, 'I love this, haha.', '0.9', 1, 1, '2019-06-01 13:34:09'),
+(1, 'I hate this, haha.', '0.9', 1, 1, '2019-06-05 06:36:20'),
 (2, 'I love this, haha', '4.5', 1, 3, '2019-06-01 13:34:09'),
 (3, 'I hate green :(', '0.5', 3, 4, '2019-06-01 13:34:09'),
-(4, 'I love this.', '5.0', 3, 4, '2019-06-03 07:14:39');
+(4, 'I love this.', '5.0', 3, 4, '2019-06-03 07:14:39'),
+(5, 'I love eating bananas!!!!', '5.0', 2, 4, '2019-06-05 05:56:38'),
+(6, 'I love eating this one.', '3.0', 1, 4, '2019-06-05 06:39:41'),
+(7, 'I want more oranges!', '4.5', 1, 4, '2019-06-05 07:32:56');
 
 -- --------------------------------------------------------
 
@@ -103,7 +106,10 @@ INSERT INTO `sales` (`cid`, `qty`, `pid`, `date`, `uid`) VALUES
 (11, 1, 2, '2019-06-03', 5),
 (12, 12, 3, '2019-05-27', 4),
 (13, 4, 3, '2019-06-02', 1),
-(14, 1, 1, '2019-12-12', 4);
+(14, 1, 1, '2019-12-12', 4),
+(15, 12, 1, '2019-04-12', 4),
+(16, 30, 1, '2019-12-12', 4),
+(17, 12, 1, '2019-12-12', 4);
 
 -- --------------------------------------------------------
 
@@ -128,7 +134,8 @@ INSERT INTO `user` (`uid`, `username`, `password`, `type`) VALUES
 (3, 'a@a.com', 'aaa', 'normal'),
 (4, 'k@k.com', '123', 'normal'),
 (5, 'k@k1.com', '123', 'normal'),
-(6, '123@ad.com', '123', 'normal');
+(6, '123@ad.com', '123', 'normal'),
+(7, '1224@aa.com', '12345', 'normal');
 
 --
 -- 已傾印資料表的索引
@@ -138,7 +145,9 @@ INSERT INTO `user` (`uid`, `username`, `password`, `type`) VALUES
 -- 資料表索引 `comment`
 --
 ALTER TABLE `comment`
-  ADD PRIMARY KEY (`cid`);
+  ADD PRIMARY KEY (`cid`),
+  ADD KEY `FK_ProductCommentPID` (`pid`),
+  ADD KEY `FK_UserSalesUID` (`uid`);
 
 --
 -- 資料表索引 `product`
@@ -150,7 +159,8 @@ ALTER TABLE `product`
 -- 資料表索引 `sales`
 --
 ALTER TABLE `sales`
-  ADD PRIMARY KEY (`cid`);
+  ADD PRIMARY KEY (`cid`),
+  ADD KEY `FK_ProductSalesPID` (`pid`);
 
 --
 -- 資料表索引 `user`
@@ -166,7 +176,7 @@ ALTER TABLE `user`
 -- 使用資料表自動增長(AUTO_INCREMENT) `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- 使用資料表自動增長(AUTO_INCREMENT) `product`
@@ -178,13 +188,32 @@ ALTER TABLE `product`
 -- 使用資料表自動增長(AUTO_INCREMENT) `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `cid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- 使用資料表自動增長(AUTO_INCREMENT) `user`
 --
 ALTER TABLE `user`
-  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- 已傾印資料表的限制(constraint)
+--
+
+--
+-- 資料表的限制(constraint) `comment`
+--
+ALTER TABLE `comment`
+  ADD CONSTRAINT `FK_ProductComment` FOREIGN KEY (`pid`) REFERENCES `product` (`pid`),
+  ADD CONSTRAINT `FK_ProductCommentPID` FOREIGN KEY (`pid`) REFERENCES `product` (`pid`),
+  ADD CONSTRAINT `FK_ProductCommentUID` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`),
+  ADD CONSTRAINT `FK_UserSalesUID` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`);
+
+--
+-- 資料表的限制(constraint) `sales`
+--
+ALTER TABLE `sales`
+  ADD CONSTRAINT `FK_ProductSalesPID` FOREIGN KEY (`pid`) REFERENCES `product` (`pid`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
